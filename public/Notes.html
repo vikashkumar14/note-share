@@ -226,7 +226,7 @@
         // Step 1: Fetch notes when a branch is selected
         async function fetchAndGroupNotes() {
             const branch = branchFilter.value;
-            // Clear everything if no branch is selected
+            
             if (!branch) {
                 resultsContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #7f8c8d;">Please select a branch to view subjects.</p>`;
                 viewHeader.style.display = 'none';
@@ -234,13 +234,23 @@
             }
             
             resultsContainer.innerHTML = '<p style="text-align:center;padding:2rem;">Loading subjects...</p>';
+            
             try {
-                const response = await fetch(`http://localhost:5000/api/notes?branch=${branch}`);
-                if (!response.ok) throw new Error('Server Error');
+                // Detect API URL
+                const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:5000'
+                    : 'https://noteshare-y2kp.onrender.com';
+                
+                const response = await fetch(`${API_URL}/api/notes?branch=${branch}`);
+                
+                if (!response.ok) {
+                    throw new Error('Server Error');
+                }
                 
                 allNotesForBranch = await response.json();
+                console.log('Fetched notes:', allNotesForBranch);
                 
-                // Step 2: Group all fetched notes by their subject
+                // Step 2: Group notes by subject
                 notesGroupedBySubject = allNotesForBranch.reduce((acc, note) => {
                     const subject = note.subject || 'Uncategorized';
                     if (!acc[subject]) acc[subject] = [];
@@ -248,14 +258,15 @@
                     return acc;
                 }, {});
 
-                // Step 3: Display the subject "folders"
+                // Step 3: Display subject folders
                 displaySubjectFolders(notesGroupedBySubject);
 
             } catch (error) {
-                resultsContainer.innerHTML = `<p style="text-align:center;color:red;">Could not load notes.</p>`;
+                console.error('Fetch error:', error);
+                resultsContainer.innerHTML = `<p style="text-align:center;color:red;">Could not load notes. ${error.message}</p>`;
             }
         }
-
+        
         // Step 4: Function to RENDER THE FOLDER VIEW
         function displaySubjectFolders(groupedNotes) {
             resultsContainer.innerHTML = '';
@@ -455,5 +466,7 @@
             });
         }
     </script>
+    <script src="mobile-menu.js"></script>
 </body>
 </html>
+
