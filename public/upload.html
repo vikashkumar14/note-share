@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Notes - NoteShare</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -239,7 +240,10 @@
                 const file = fileInput.files[0];
                 if (!file) { alert('Please select a file to upload.'); return; }
                 if (file.size > MAX_SIZE) { alert('File too large. Maximum 10MB allowed.'); return; }
-                if (!ALLOWED.includes(file.type) && !file.name.match(/\.(pdf|docx|doc)$/i)) { alert('Invalid file type. Use PDF or DOCX.'); return; }
+                if (!ALLOWED.includes(file.type) && !file.name.match(/\.(pdf|docx|doc)$/i)) { 
+                    alert('Invalid file type. Use PDF or DOCX.'); 
+                    return; 
+                }
 
                 submitButton.disabled = true;
                 submitButton.textContent = 'Uploading...';
@@ -262,10 +266,12 @@
                         currentXhr = null;
                         submitButton.disabled = false;
                         submitButton.textContent = 'Upload & Share';
+                        
                         if (xhr.status >= 200 && xhr.status < 300) {
                             try {
                                 const res = JSON.parse(xhr.responseText);
                                 alert(res.message || 'Uploaded successfully!');
+                                console.log('Upload success:', res);
                                 form.reset();
                                 dzFileinfo.style.display = 'none';
                                 progressWrap.style.display = 'none';
@@ -281,11 +287,18 @@
                     }
                 };
 
-                xhr.open('POST', 'http://localhost:5000/api/upload', true);
+                // Detect API URL
+                const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:5000'
+                    : 'https://noteshare-y2kp.onrender.com';
+                
+                xhr.open('POST', `${API_URL}/api/upload`, true);
                 xhr.setRequestHeader('Authorization', 'Bearer ' + token);
                 xhr.send(fd);
             });
         })();
     </script>
+    <script src="mobile-menu.js"></script>
 </body>
 </html>
+
