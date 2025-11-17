@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
     passingYear: { type: String },
     role: {
         type: String,
-        enum: ['user', 'faculty', 'admin'],
-        default: 'user'
+        enum: ['admin', 'teacher', 'student'],
+        default: 'student'
     },
     profileImage: { type: String },
     isBlocked: {
