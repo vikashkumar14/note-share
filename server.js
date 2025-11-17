@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     'https://noteshare-y2kp.onrender.com',
+    'https://note-share-yfyr.onrender.com',
     'http://localhost:5000',
     'http://127.0.0.1:5000',
     'http://localhost:5500',
@@ -500,6 +501,25 @@ const ensureDefaultUsers = async () => {
     console.error('Error creating default users:', err);
   }
 };
+// ==================== NOTES BY BRANCH ====================
+app.get('/api/notes', async (req, res) => {
+  try {
+    const { branch } = req.query;
+    if (!branch) {
+      return res.status(400).json({ message: 'Branch parameter is required' });
+    }
+    
+    const notes = await Note.find({ branch })
+      .populate('uploadedBy', 'name email')
+      .sort({ createdAt: -1 });
+      
+    res.json(notes);
+  } catch (err) {
+    console.error('Error fetching notes by branch:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
 // ==================== API 404 & ERROR HANDLER ====================
 app.use('/api', (req, res, next) => {
   res.status(404).json({ message: 'API endpoint not found.' });
