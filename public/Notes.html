@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College NoteShare - Notes</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <style>
+        /* Toast message styles */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4caf50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { bottom: -50px; opacity: 0; }
+            to { bottom: 20px; opacity: 1; }
+        }
+        
+        /* === STYLES FOR FOLDER VIEW === */
+        .subject-folder {
+            background-color: #fff;
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 180px; /* Gives folders a uniform size */
+        }
+        .subject-folder:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(41,128,185,0.15);
+            border-color: #3498db;
+        }
+        .subject-folder .icon {
+            font-size: 3.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        .subject-folder .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .subject-folder .count {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            background-color: #f2f4f7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+        }
+        
+        /* === STYLES FOR THE "BACK" BUTTON AND HEADER === */
+        #view-header {
+            margin-bottom: 2rem;
+            display: none; /* Hidden by default, shown when viewing notes */
+            align-items: center;
+        }
+        #back-to-subjects-btn {
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 1.5rem;
+            transition: background 0.2s;
+        }
+        #back-to-subjects-btn:hover {
+            background: #e0e0e0;
+        }
+        #current-view-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* === STYLES FOR THE NOTE CARDS (FROM YOUR LATEST CODE) === */
+        .note-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            border: 1px solid #eee;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .note-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        #results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        #results-container.folder-view {
+             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* smaller cards for folders */
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header enhanced-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%);">
+        <!-- Your header code is fine -->
+        <div class="container"> <a href="index.html" class="logo">College NoteShare</a> <nav class="main-nav"> <a href="Notes.html" class="btn-nav active">Notes</a> <a href="upload.html" class="btn-nav">Upload Note</a> <a href="auth.html" class="btn-nav">Login</a> <a href="about.html" class="btn-nav">About</a> <a href="contact.html" class="btn-nav">Contact</a> <a href="profile.html" class="btn-nav">Profile</a> </nav> </div>
+    </header>
+
+    <main style="padding: 40px 0;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1>Explore <span style="color: #3498db;">Community Notes</span></h1>
+            </div>
+            
+            <div class="notes-toolbar" style="background: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2.5rem; position: sticky; top: 20px; z-index: 100;">
+                <select id="branch-filter" style="padding:0.7rem 1.2rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;">
+                    <option value="">Select a Branch</option>
+                    <option value="CS">CS</option>
+                    <option value="ECE">ECE</option>
+                    <option value="ME">ME</option>
+                    <option value="EE">EE</option>
+                    <option value="CE">CE</option>
+                    <option value="IT">IT</option>
+                    <option value="BCA">BCA</option>
+                </select>
+                <!-- Search is complex in this view, so we will simplify its role for now -->
+                 <input type="text" id="search-notes" placeholder="Search notes within the selected subject..." disabled style="flex-grow:1; padding:0.7rem 1.2rem; border-radius:8px; border:1px solid #ccc;">
+            </div>
+            
+            <!-- This new header will appear when you click a folder -->
+            <div id="view-header">
+                <button id="back-to-subjects-btn"><i class="fas fa-arrow-left"></i> Back to Subjects</button>
+                <h2 id="current-view-title"></h2>
+            </div>
+
+            <!-- This is the main container for both folders and notes -->
+            <div id="results-container">
+                 <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #7f8c8d;">Please select a branch to view subjects.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+                    <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+                        Empowering students with collaborative learning through shared knowledge and resources.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+                        <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                    <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+                        <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+                        contact@collegenoteshare.com
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+                <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+                    &copy; 2023 College NoteShare. All rights reserved. 
+                    <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+                        Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+                    </span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const resultsContainer = document.getElementById('results-container');
+        const branchFilter = document.getElementById('branch-filter');
+        const searchInput = document.getElementById('search-notes');
+
+        // NEW Elements for the folder view navigation
+        const viewHeader = document.getElementById('view-header');
+        const backToSubjectsBtn = document.getElementById('back-to-subjects-btn');
+        const currentViewTitle = document.getElementById('current-view-title');
+        
+        // State variables to hold data
+        let allNotesForBranch = [];
+        let notesGroupedBySubject = {};
+
+        // === EVENT LISTENERS ===
+        branchFilter.addEventListener('change', fetchAndGroupNotes);
+        backToSubjectsBtn.addEventListener('click', () => {
+            // Simply redisplay folders from memory, no need to fetch again
+            displaySubjectFolders(notesGroupedBySubject);
+        });
+
+        // Step 1: Fetch notes when a branch is selected
+        async function fetchAndGroupNotes() {
+            const branch = branchFilter.value;
+            // Clear everything if no branch is selected
+            if (!branch) {
+                resultsContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #7f8c8d;">Please select a branch to view subjects.</p>`;
+                viewHeader.style.display = 'none';
+                return;
+            }
+            
+            resultsContainer.innerHTML = '<p style="text-align:center;padding:2rem;">Loading subjects...</p>';
+            try {
+                const response = await fetch(`http://localhost:5000/api/notes?branch=${branch}`);
+                if (!response.ok) throw new Error('Server Error');
+                
+                allNotesForBranch = await response.json();
+                
+                // Step 2: Group all fetched notes by their subject
+                notesGroupedBySubject = allNotesForBranch.reduce((acc, note) => {
+                    const subject = note.subject || 'Uncategorized';
+                    if (!acc[subject]) acc[subject] = [];
+                    acc[subject].push(note);
+                    return acc;
+                }, {});
+
+                // Step 3: Display the subject "folders"
+                displaySubjectFolders(notesGroupedBySubject);
+
+            } catch (error) {
+                resultsContainer.innerHTML = `<p style="text-align:center;color:red;">Could not load notes.</p>`;
+            }
+        }
+
+        // Step 4: Function to RENDER THE FOLDER VIEW
+        function displaySubjectFolders(groupedNotes) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.className = 'folder-view'; // Use class for folder-specific grid layout
+            viewHeader.style.display = 'none'; // Hide the 'back' button
+            searchInput.disabled = true; // Disable search in folder view
+
+            const subjects = Object.keys(groupedNotes);
+
+            if (subjects.length === 0) {
+                resultsContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center;">No notes uploaded for this branch yet.</p>`;
+                return;
+            }
+
+            subjects.forEach(subject => {
+                const notesInSubject = groupedNotes[subject];
+                const folderCard = document.createElement('div');
+                folderCard.className = 'subject-folder';
+                folderCard.innerHTML = `
+                    <div class="icon"><i class="fas fa-folder-open"></i></div>
+                    <div class="title">${subject}</div>
+                    <div class="count">${notesInSubject.length} Note(s)</div>
+                `;
+                
+                // When a folder is clicked, show the notes for THAT subject
+                folderCard.onclick = () => displayNotesForSubject(subject, notesInSubject);
+                resultsContainer.appendChild(folderCard);
+            });
+        }
+
+        // Step 5: Function to RENDER THE NOTES VIEW for a specific subject
+        function displayNotesForSubject(subjectName, notesArray) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.className = ''; // Remove folder-view class
+            viewHeader.style.display = 'flex'; // SHOW the 'back' button and header
+            currentViewTitle.textContent = subjectName; // Set the header title
+            searchInput.disabled = false; // Enable search now
+
+            notesArray.forEach(note => {
+                const fileUrl = note.filePath ? `http://localhost:5000/${note.filePath.replace(/\\/g, '/')}` : '#';
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card'; // This uses your note card styling
+
+                // Using the note card HTML from your latest version
+                noteCard.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 0.8rem;">
+                        <span style="background: #e3f2fd; color: #1976d2; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 12px; margin-right: 0.8rem;">
+                            ${note.branch || 'General'}
+                        </span>
+                        <span style="background: #e8f5e9; color: #2e7d32; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 12px;">
+                            Year ${note.year || 'N/A'} | Sem ${note.semester || 'N/A'}
+                        </span>
+                    </div>
+                    
+                    <h3 style="font-size: 1.2rem; font-weight: 600; color: #2d2d2d; margin: 0 0 0.8rem 0; line-height: 1.3;">
+                        ${note.title || 'Untitled Note'}
+                    </h3>
+                    
+                    <div style="font-size: 0.95rem; color: #555; margin-bottom: 1.2rem; line-height: 1.5; flex-grow: 1;">
+                        <div style="display: flex; align-items: center; color: #6c757d; font-size: 0.85rem; margin-top: auto;">
+                            <i class="far fa-user" style="margin-right: 0.5rem;"></i>
+                            <span style="margin-right: 1rem;">${note.uploadedBy?.name || 'Anonymous'}</span>
+                            <i class="far fa-calendar-alt" style="margin-right: 0.5rem;"></i>
+                            <span>${note.uploadedAt ? new Date(note.uploadedAt).toLocaleDateString() : 'Unknown date'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
+                         <button class="btn-preview-note" style="background:#007bff; color:white; border:none; padding:0.6rem 1rem; border-radius:6px; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <i class="fas fa-eye"></i> Preview
+                         </button>
+                        <a href="${fileUrl}" target="_blank" download class="btn-download" style="background:#4caf50; color:white; border:none; padding:0.6rem 1rem; border-radius:6px; cursor:pointer; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn-save-note" style="background:#f0f7ff; color:#1976d2; border:1px solid #d0e3ff; padding:0.6rem 1rem; border-radius:6px; cursor:pointer; font-size:0.9rem; margin-left:auto; display:flex; align-items:center; gap:0.5rem;">
+                            <i class="far fa-bookmark"></i> Save
+                        </button>
+                    </div>
+                `;
+                
+                // Add event handlers for buttons inside the card
+                noteCard.querySelector('.btn-preview-note').onclick = () => {
+                     if (fileUrl !== '#') window.open(fileUrl, '_blank');
+                     else alert('No file available for preview.');
+                };
+                
+                // Add save note functionality with better error handling
+                const saveButton = noteCard.querySelector('.btn-save-note');
+                saveButton.onclick = async () => {
+                    try {
+                        // First, check if user is logged in
+                        const token = localStorage.getItem('authToken');
+                        const authUser = JSON.parse(localStorage.getItem('authUser'));
+                        
+                        if (!token || !authUser || !authUser._id) {
+                            window.location.href = 'auth.html';
+                            return;
+                        }
+                        
+                        // Get the note ID - check different possible properties
+                        const noteId = note._id || note.id || (note.note && (note.note._id || note.note.id));
+                        
+                        if (!noteId) {
+                            console.error('Note ID not found in note object:', note);
+                            throw new Error('Could not find note ID. Please try refreshing the page.');
+                        }
+                        
+                        // Update UI to show loading state
+                        saveButton.disabled = true;
+                        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                        
+                        // Prepare the request body
+                        const requestBody = {
+                            userId: authUser._id,
+                            noteId: noteId
+                        };
+                        
+                        console.log('Sending save request with:', requestBody);
+                        
+                        // Make the API request to save the note
+                        const response = await fetch('http://localhost:5000/api/user/save-note', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
+                        
+                        // Parse the response
+                        let data;
+                        try {
+                            data = await response.json();
+                            console.log('Save note response:', data);
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                            throw new Error('Invalid response from server');
+                        }
+                        
+                        // Check if the request was successful
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Failed to save note');
+                        }
+                        
+                        // Update UI to show success state
+                        saveButton.innerHTML = '<i class="fas fa-check"></i> Saved';
+                        saveButton.style.backgroundColor = '#e8f5e9';
+                        saveButton.style.color = '#2e7d32';
+                        saveButton.style.borderColor = '#c8e6c9';
+                        saveButton.disabled = true; // Keep it disabled after successful save
+                        
+                        // Show success message
+                        const toast = document.createElement('div');
+                        toast.className = 'toast-message';
+                        toast.textContent = 'Note saved to your profile!';
+                        document.body.appendChild(toast);
+                        
+                        // Remove toast after 3 seconds
+                        setTimeout(() => {
+                            toast.remove();
+                        }, 3000);
+                        
+                    } catch (error) {
+                        console.error('Error saving note:', error);
+                        
+                        // Reset button state
+                        saveButton.innerHTML = '<i class="far fa-bookmark"></i> Save';
+                        saveButton.disabled = false;
+                        
+                        // Handle specific error cases
+                        let errorMessage = 'Failed to save note. ';
+                        
+                        if (error.message.includes('already saved') || error.message.includes('already exists')) {
+                            errorMessage = 'This note is already in your saved collection.';
+                            saveButton.innerHTML = '<i class="fas fa-check"></i> Saved';
+                            saveButton.style.backgroundColor = '#e8f5e9';
+                            saveButton.style.color = '#2e7d32';
+                            saveButton.style.borderColor = '#c8e6c9';
+                            saveButton.disabled = true;
+                        } else if (error.message.includes('Unauthorized') || error.message.includes('No token') || error.message.includes('auth')) {
+                            errorMessage = 'Your session has expired. Please log in again.';
+                            window.location.href = 'auth.html';
+                            return;
+                        } else if (error.message.includes('Missing') || error.message.includes('required') || error.message.includes('userId') || error.message.includes('noteId')) {
+                            errorMessage = 'Required information is missing. Please log out and log in again.';
+                            console.error('Missing required fields. User data:', localStorage.getItem('authUser'), 'Note data:', note);
+                        } else {
+                            errorMessage += error.message || 'Please try again.';
+                        }
+                        
+                        // Show error message to user
+                        alert(errorMessage);
+                    }
+                };
+
+                resultsContainer.appendChild(noteCard);
+            });
+        }
+    </script>
+</body>
+</html>

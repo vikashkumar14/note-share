@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Analytics</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .metrics { display:flex; gap:1rem; margin:1rem 0; }
+    .metric { background:#fff; padding:1rem; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.06); flex:1 }
+    .chart-card { margin-top:1rem; }
+    /* ensure content is pushed below header so metrics are visible */
+    main.container { padding-top: 80px; }
+    .metrics { margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <a href="index.html" class="logo">Admin Analytics</a>
+      <nav class="main-nav">
+        <a href="admin.html">Back to Admin</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Analytics</h1>
+    <div id="summary" class="metrics">
+      <div class="metric"><h3>Total Notes</h3><div id="totalNotes">-</div></div>
+      <div class="metric"><h3>Pending Notes</h3><div id="pendingNotes">-</div></div>
+      <div class="metric"><h3>Accepted Notes</h3><div id="acceptedNotes">-</div></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Top Branches</h3>
+      <canvas id="branchesChart" width="600" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Recent Uploads (last 7 days)</h3>
+      <ul id="recentUploads"></ul>
+    </div>
+  </main>
+
+  <script>
+    async function fetchMetrics() {
+      const token = localStorage.getItem('authToken');
+      const user = JSON.parse(localStorage.getItem('authUser') || 'null');
+      if (!token || !user || user.role !== 'admin') {
+        // Not authenticated as admin — redirect to admin login
+        console.warn('Admin dashboard access attempted without admin auth');
+        alert('Please login as an admin first');
+        window.location.href = 'admin.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/metrics', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) {
+          const txt = await res.text();
+          console.error('Metrics API error', res.status, txt);
+          alert('Failed to load metrics: ' + (txt || res.statusText));
+          return;
+        }
+        const data = await res.json();
+        document.getElementById('totalNotes').textContent = data.totalNotes;
+        document.getElementById('pendingNotes').textContent = data.pendingNotes;
+        document.getElementById('acceptedNotes').textContent = data.acceptedNotes;
+
+        try {
+          const labels = (data.topBranches || []).map(b => b._id);
+          const counts = (data.topBranches || []).map(b => b.count);
+          const canvas = document.getElementById('branchesChart');
+          const ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+          if (ctx) {
+            // destroy previous chart instance if present
+            if (window._branchesChart) {
+              try { window._branchesChart.destroy(); } catch(e) { /* ignore */ }
+            }
+            window._branchesChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Notes by Branch', data: counts, backgroundColor: 'rgba(54,162,235,0.6)' }] } });
+          }
+        } catch (chartErr) {
+          console.error('Chart rendering error', chartErr);
+          // continue — metrics numbers still useful
+        }
+
+        const recent = document.getElementById('recentUploads');
+        recent.innerHTML = (data.recentUploads || []).map(n => {
+          const when = n.createdAt ? new Date(n.createdAt).toLocaleString() : 'unknown';
+          return `<li>${when} — ${n.title || 'untitled'} (${n.branch || 'N/A'})</li>`;
+        }).join('');
+
+      } catch (err) {
+        console.error('Failed to fetch metrics', err);
+        alert('Error loading metrics: ' + err.message);
+      }
+    }
+    fetchMetrics();
+  </script>
+</body>
+</html>

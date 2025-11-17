@@ -1,0 +1,43 @@
+// savednotes.js - Show user's saved notes
+
+document.addEventListener('DOMContentLoaded', async function() {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        const user = JSON.parse(localStorage.getItem('authUser'));
+        if (user && user._id) userId = user._id;
+    }
+    const savedList = document.getElementById('saved-notes-list');
+    if (!userId) {
+        savedList.innerHTML = '<p style="color:#f44336;">Please login to view your saved notes.</p>';
+        return;
+    }
+    try {
+        const res = await fetch(`http://localhost:5000/api/user/saved-notes?userId=${userId}`);
+        if (!res.ok) throw new Error('Server error');
+        const notes = await res.json();
+        if (!notes || notes.length === 0) {
+            savedList.innerHTML = '<p style="color:#888;">You have not saved any notes yet.</p>';
+            return;
+        }
+        savedList.innerHTML = '';
+        notes.forEach(note => {
+            const div = document.createElement('div');
+            div.className = 'note-card';
+            div.style = 'background:#fff; border-radius:14px; box-shadow:0 2px 16px #f4433633; padding:1.2rem; margin-bottom:1rem;';
+            const fileUrl = `http://localhost:5000/${note.filePath.replace(/\\/g, '/')}`;
+            div.innerHTML = `
+                <h3 style="font-size:1.15rem; font-weight:700; color:#2d2d2d; margin-bottom:0.3rem;">${note.title}</h3>
+                <div style="font-size:0.98rem; color:#555; margin-bottom:0.4rem;">
+                    <span><strong>Subject:</strong> ${note.subject}</span><br>
+                    <span><strong>Year:</strong> ${note.year} | <strong>Semester:</strong> ${note.semester}</span>
+                </div>
+                <div style="margin-bottom:0.7rem;">
+                    <a href="${fileUrl}" target="_blank" download style="color:#ff9800; font-weight:700;">Download</a>
+                </div>
+            `;
+            savedList.appendChild(div);
+        });
+    } catch (err) {
+        savedList.innerHTML = '<p style="color:#f44336;">Error loading saved notes.</p>';
+    }
+});

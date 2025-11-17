@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - NoteShare</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+</head>
+<body>
+    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
+        <div class="container">
+            <a href="index.html" class="logo" style="color:#006aff; font-weight:800; font-size:2rem; letter-spacing:-1px;">College NoteShare</a>
+            <nav class="main-nav">
+                <a href="index.html" class="btn-nav">Home</a>
+                <a href="Notes.html" class="btn-nav">Notes</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav">Contact</a>
+                <a href="profile.html" class="btn-nav active">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="profile-page">
+        <div class="container">
+            <header class="profile-page-header">
+                <h1>My Profile</h1>
+                <p>Manage your account settings, view your contributions, and track your progress.</p>
+            </header>
+            
+            <div class="profile-container">
+                <aside class="profile-sidebar">
+                    <div class="card profile-card-enhanced">
+                        <div class="profile-picture-wrapper">
+                            <img src="" alt="User's Profile Picture" id="profile-img">
+                            <label for="profile-pic-upload" class="change-pic-btn" title="Change Profile Picture">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;">
+                            </label>
+                        </div>
+                        <div class="profile-info-block">
+                            <h2 id="profile-display-name">Loading...</h2>
+                            <p id="profile-display-email" class="text-muted">loading...</p>
+                            <div class="profile-meta">
+                                <span><i class="fas fa-building-columns"></i> Branch: <strong id="profile-branch-value">-</strong></span>
+                                <span><i class="fas fa-graduation-cap"></i> Semester: <strong id="profile-sem-value">-</strong></span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="profile-stats-enhanced">
+                            <div>
+                                <span class="stat-icon">📚</span>
+                                <span id="notes-uploaded-count" class="stat-number">0</span>
+                                <label>Uploaded</label>
+                            </div>
+                            <div>
+                                <span class="stat-icon">❤️</span>
+                                <span id="notes-saved-count" class="stat-number">0</span>
+                                <label>Saved</label>
+                            </div>
+                        </div>
+                        <div class="profile-top-note">
+                            <h4 class="section-title">⭐ Top Note</h4>
+                            <p id="top-note-title">No notes uploaded yet.</p>
+                            <span id="top-note-downloads" class="text-muted"></span>
+                        </div>
+                         <div class="profile-badges">
+                            <h4 class="section-title">🏆 Badges</h4>
+                            <div id="badges-grid" class="badges-grid">
+                                <div class="badge" title="Contributor: Upload your first note!">
+                                    <i class="fas fa-feather-alt"></i>
+                                    <span>Contributor</span>
+                                </div>
+                                <div class="badge earned" title="Power Uploader: Upload 10+ notes!">
+                                    <i class="fas fa-rocket"></i>
+                                    <span>Power Uploader</span>
+                                </div>
+                                <div class="badge" title="Top 10: Have a note in the top 10 downloads!">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Top 10</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <a href="allnotes.html" class="btn btn-primary"><i class="fas fa-file-alt"></i> View All Notes</a>
+                            <a href="savednotes.html" class="btn btn-secondary"><i class="fas fa-bookmark"></i> View Saved Notes</a>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="profile-main">
+                    <div class="card">
+                        <nav class="profile-tabs">
+                            <a href="#account-details" class="tab-link active" data-tab="account-details"><i class="fas fa-user-cog"></i> Account Details</a>
+                            <a href="#my-uploads" class="tab-link" data-tab="my-uploads"><i class="fas fa-upload"></i> My Uploads</a>
+                            <a href="#security" class="tab-link" data-tab="security"><i class="fas fa-shield-alt"></i> Security</a>
+                        </nav>
+
+                        <div id="account-details" class="tab-content active">
+                            <form id="profile-form">
+                                <fieldset>
+                                    <legend>Personal Information</legend>
+                                    <div class="form-group">
+                                        <label for="profile-name">Full Name</label>
+                                        <input type="text" id="profile-name" required placeholder="Your full name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile-email">Email Address</label>
+                                        <input type="email" id="profile-email" disabled title="Email address cannot be changed.">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile-bio">About Me</label>
+                                        <textarea id="profile-bio" rows="3" placeholder="Tell us a little about yourself..."></textarea>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Academic Information</legend>
+                                    <div class="form-group">
+                                        <label for="profile-college">College / University</label>
+                                        <input type="text" id="profile-college" placeholder="e.g., University of Technology">
+                                    </div>
+                                    <div class="form-group-row">
+                                        <div class="form-group">
+                                            <label for="profile-branch-select">Branch / Department</label>
+                                            <select id="profile-branch-select">
+                                                <option value="">Select Branch</option>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics</option>
+                        <option value="ME">Mechanical</option>
+                        <option value="CE">Civil</option>
+                        <option value="EE">Electrical</option>
+                        <option value="IT">Information Technology</option>
+                       
+                        <option value="BCA">Bachelor of Computer Application/option>
+                        <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profile-semester">Current Semester</label>
+                                            <select id="profile-semester">
+                                                <option value="">-- Select Semester --</option>
+                                                <option value="1">Semester 1</option>
+                                                <option value="2">Semester 2</option>
+                                                <option value="3">Semester 3</option>
+                                                <option value="4">Semester 4</option>
+                                                <option value="5">Semester 5</option>
+                                                <option value="6">Semester 6</option>
+                                                <option value="7">Semester 7</option>
+                                                <option value="8">Semester 8</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-primary btn-submit">Save Changes</button>
+                            </form>
+                        </div>
+                        
+                        <div id="my-uploads" class="tab-content">
+                             <h3>My Recent Uploads</h3>
+                             <ul id="recent-uploads-list" class="detailed-list">
+                                <li>
+                                    <div class="note-info">
+                                        <span class="note-title">Advanced Algorithms & Data Structures</span>
+                                        <span class="note-meta">Subject: CS-501 | Uploaded: 15 Aug 2025</span>
+                                    </div>
+                                    <div class="note-stats">
+                                        <i class="fas fa-download"></i> 125
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="note-info">
+                                        <span class="note-title">Operating Systems Concepts</span>
+                                        <span class="note-meta">Subject: CS-503 | Uploaded: 10 Aug 2025</span>
+                                    </div>
+                                    <div class="note-stats">
+                                        <i class="fas fa-download"></i> 88
+                                    </div>
+                                </li>
+                             </ul>
+                        </div>
+
+                        <div id="security" class="tab-content">
+                            <h3>Security Settings</h3>
+                            <div class="security-option">
+                                <div>
+                                    <h4>Change Password</h4>
+                                    <p class="text-muted">It's a good idea to use a strong password that you're not using elsewhere.</p>
+                                </div>
+                                <button id="change-password-btn" class="btn btn-secondary">Change Password</button>
+                            </div>
+                            <hr>
+                            <div class="security-option destructive-zone">
+                                <div>
+                                    <h4>Delete Account</h4>
+                                    <p class="text-muted">Permanently delete your account and all of your content. This action is irreversible.</p>
+                                </div>
+                                <button id="delete-account-btn" class="btn btn-danger">Delete My Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <div id="toast-popup" class="toast-popup"></div>
+
+    <div id="password-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <h3>Change Your Password</h3>
+            <form id="password-change-form">
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                 <div class="form-group">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input type="password" id="confirm-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+  <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+            Empowering students with collaborative learning through shared knowledge and resources.
+          </p>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+            contact@collegenoteshare.com
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+          &copy; 2023 College NoteShare. All rights reserved. 
+          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+          </span>
+        </p>
+      </div>
+    </div>
+  </footer>
+    
+    <script src="script.js"></script>
+    <script src="profile.js"></script> 
+</body>
+</html>

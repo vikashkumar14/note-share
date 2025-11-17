@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College NoteShare - Single Page Experience</title>
+    <!-- CSS is now inside the <style> tag below for simplicity, or you can link to style.css -->
+            <link rel="stylesheet" href="style.css"> 
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+<body>
+    <header class="main-header enhanced-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
+        <div class="container">
+            <a href="index.html" class="logo">College NoteShare</a>
+            <nav class="main-nav">
+                <a href="Notes.html" class="btn-nav">Notes</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav">Contact</a>
+                <a href="profile.html" class="btn-nav">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- ======== भाग 1: होमपेज का कंटेंट (Hero and Features) ======== -->
+        <div id="homepage-content">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2 style="font-size:2.6rem; font-weight:800; letter-spacing:-1px; margin-bottom:0.7rem;">Level Up Your Learning</h2>
+                    <p style="font-size:1.18rem; max-width:520px; margin:0 auto 1.5rem; font-weight:500; color:#ffffff; border-radius:10px; padding:0.7rem 1rem; box-shadow:0 2px 8px rgba(26,35,126,0.07);">Explore top-rated notes, connect with brilliant minds, and make every study session count. Your journey to academic excellence starts now!</p>
+                    <a href="Notes.html" class="btn-hero" style="background:linear-gradient(90deg,#ff9800,#f44336); color:#fff; font-weight:700; font-size:1.1rem; border-radius:8px; box-shadow:0 4px 16px rgba(47, 48, 46, 0.94);">Explore Notes</a>
+                </div>
+            </section>
+            <!-- How It Works Section -->
+            <section class="content-section" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.07); margin:2.5rem auto 1.5rem auto; max-width:900px; padding:2rem 1.5rem;">
+                <h2 class="section-title" style="text-align:center; color:#ff9800;">How It Works</h2>
+                <div style="display:flex; justify-content:space-around; gap:2rem; flex-wrap:wrap; margin-top:2rem;">
+                    <div style="text-align:center; max-width:220px;">
+                        <div style="font-size:2.5rem; color:#ff9800;"><i class="fas fa-upload"></i></div>
+                        <h4 style="margin:0.7rem 0 0.3rem 0; font-weight:700;">Upload Notes</h4>
+                        <p style="color:#555; font-size:1rem;">Share your study materials with the community in just a few clicks.</p>
+                    </div>
+                    
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="content-section" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.07); margin:2.5rem auto 1.5rem auto; max-width:900px; padding:2rem 1.5rem;">
+                <h2 class="section-title" style="text-align:center; color:#43a047;">What Students Say</h2>
+                <div style="display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:1.5rem;">
+                    <div style="background:#f7f8fa; border-radius:12px; box-shadow:0 2px 8px #43a04733; padding:1.2rem; max-width:320px;">
+                        <div style="font-size:1.1rem; color:#333; font-style:italic;">"NoteShare helped me score better in exams. The notes are high quality and easy to find!"</div>
+                        <div style="margin-top:0.7rem; font-weight:700; color:#43a047;">- Sumandeep, BCA 3rd Year</div>
+                    </div>
+                    <div style="background:#f7f8fa; border-radius:12px; box-shadow:0 2px 8px #ff980033; padding:1.2rem; max-width:320px;">
+                        <div style="font-size:1.1rem; color:#333; font-style:italic;">"Uploading my notes was super easy. I love the rewards and the community!"</div>
+                        <div style="margin-top:0.7rem; font-weight:700; color:#ff9800;">- Sumit, BCA 3rd Year</div>
+                    </div>
+                    <div style="background:#f7f8fa; border-radius:12px; box-shadow:0 2px 8px #f4433633; padding:1.2rem; max-width:320px;">
+                        <div style="font-size:1.1rem; color:#333; font-style:italic;">"Best place for last-minute revision. Highly recommended for all branches!"</div>
+                        <div style="margin-top:0.7rem; font-weight:700; color:#f44336;">- Vikash, BCA 3rd Year</div>
+                    </div>
+                </div>
+            </section>
+    
+            <section class="content-section">
+                <div class="container">
+                    <h2 class="section-title">Why Students Choose College NoteShare</h2>
+                    <div class="features-grid">
+                        <div class="card" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.10); padding:2rem 1.5rem; margin-bottom:1rem; display:flex; flex-direction:column; align-items:center; gap:0.7rem; transition:box-shadow 0.2s;">
+                            <h3 style="font-size:1.35rem; font-weight:800; color:#ff9800; margin-bottom:0.5rem;"><i class="fas fa-search"></i> Instant Search</h3>
+                            <p style="font-size:1.08rem; color:#444;">Our powerful, filter-based search gets you the right notes in seconds.</p>
+                        </div>
+                        <div class="card" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.10); padding:2rem 1.5rem; margin-bottom:1rem; display:flex; flex-direction:column; align-items:center; gap:0.7rem; transition:box-shadow 0.2s;">
+                            <h3 style="font-size:1.35rem; font-weight:800; color:#43a047; margin-bottom:0.5rem;"><i class="fas fa-check-circle"></i> Quality Content</h3>
+                            <p style="font-size:1.08rem; color:#444;">Community ratings ensure you only study from the best materials.</p>
+                        </div>
+                        <div class="card" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.10); padding:2rem 1.5rem; margin-bottom:1rem; display:flex; flex-direction:column; align-items:center; gap:0.7rem; transition:box-shadow 0.2s;">
+                            <h3 style="font-size:1.35rem; font-weight:800; color:#1976d2; margin-bottom:0.5rem;"><i class="fas fa-user-shield"></i> Faculty Verified</h3>
+                            <p style="font-size:1.08rem; color:#444;">Notes are reviewed and verified by faculty for accuracy and quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Recently Uploaded Notes Section -->
+            <section class="content-section" style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(47,48,46,0.07); margin:2.5rem auto 1.5rem auto; max-width:900px; padding:2rem 1.5rem;">
+                <h2 class="section-title" style="text-align:center; color:#f44336;">Recently Uploaded Notes</h2>
+                <div id="recent-notes-list" style="display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:1.5rem;"></div>
+            </section>
+        </div>
+
+        <!-- ======== भाग 2: नोट्स दिखाने वाला सेक्शन (शुरू में छिपा हुआ) ======== -->
+        <!-- ✅ नया: यह सेक्शन शुरू में छिपा रहेगा और बटन क्लिक पर दिखेगा -->
+        <section id="notes-section" class="content-section" style="display: none; background: #f7f8fa; min-height: 80vh;">
+            <div class="container" style="max-width: 900px; margin: 0 auto;">
+                <div class="notes-toolbar" style="display:flex; justify-content: center; align-items: center; margin-bottom: 2rem; gap: 1rem;">
+                    <input type="text" id="search-notes" placeholder="Search by subject, year, or title..." style="padding:0.7rem 1.2rem; border-radius:8px; border:1px solid #ccc; font-size:1rem; width:60%; box-shadow:0 2px 8px rgba(26,35,126,0.07);">
+                    <button id="clear-search" style="padding:0.7rem 1.2rem; border-radius:8px; background:#ff9800; color:#fff; font-weight:700; border:none; cursor:pointer;">Clear</button>
+                </div>
+                <h2 class="section-title" style="text-align:center; font-size:2.2rem; font-weight:800; margin-bottom:1.2rem; color:#2d2d2d;">Explore Community Notes</h2>
+                <div id="notes-results" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:2rem;">
+                    <!-- Notes will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+  <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+            Empowering students with collaborative learning through shared knowledge and resources.
+          </p>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+            contact@collegenoteshare.com
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+          &copy; 2023 College NoteShare. All rights reserved. 
+          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+          </span>
+        </p>
+      </div>
+    </div>
+  </footer>
+    
+    <!-- ======== भाग 3: सारा JavaScript लॉजिक ======== -->
+    <!-- index.html के अंत में -->
+<script>
+// Dynamically load Recently Uploaded Notes
+async function loadRecentNotes() {
+    const container = document.getElementById('recent-notes-list');
+    if (!container) return;
+    container.innerHTML = '<div style="font-size:1.1rem; color:#888;">Loading...</div>';
+    try {
+        const res = await fetch('/api/notes');
+        let notes = await res.json();
+        if (!Array.isArray(notes) || notes.length === 0) {
+            container.innerHTML = '<div style="font-size:1.1rem; color:#888;">No notes uploaded yet.</div>';
+            return;
+        }
+        // Only show accepted notes, sorted by most recent
+        notes = notes.filter(n => n.status === 'accepted').sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if (notes.length === 0) {
+            container.innerHTML = '<div style="font-size:1.1rem; color:#888;">No notes approved yet.</div>';
+            return;
+        }
+        // Show up to 6 most recent
+        const recent = notes.slice(0, 6);
+        container.innerHTML = recent.map(note => `
+            <div class="card" style="width:260px; background:#fafafa; border-radius:12px; box-shadow:0 2px 8px #f4433633; padding:1.2rem;">
+                <h4 style="font-size:1.08rem; font-weight:700; color:#2d2d2d; margin-bottom:0.3rem;">${note.title || 'Untitled'}</h4>
+                <div style="color:#888; font-size:0.98rem; margin-bottom:0.5rem;">${note.branch || '-'}, ${note.year || ''}</div>
+                <div style="font-size:0.95rem; color:#555;">${note.filePath ? note.filePath.split('.').pop().toUpperCase() : ''}${note.pageCount ? ', ' + note.pageCount + ' pages' : ''}</div>
+                ${note.filePath ? `<a href="/${note.filePath.replace(/\\/g, '/')}" target="_blank" class="btn btn-primary" style="margin-top:0.7rem;">View</a>` : ''}
+            </div>
+        `).join('');
+    } catch (err) {
+        container.innerHTML = '<div style="font-size:1.1rem; color:#f44336;">Error loading notes.</div>';
+    }
+}
+document.addEventListener('DOMContentLoaded', loadRecentNotes);
+</script>
+</body>
+</html>

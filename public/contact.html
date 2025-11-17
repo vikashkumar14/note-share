@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact - College NoteShare</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
+        <div class="container">
+            <a href="index.html" class="logo" style="color:#0577fa; font-weight:800; font-size:2rem; letter-spacing:-1px;">College NoteShare</a>
+            <nav class="main-nav">
+                 <a href="Notes.html" class="btn-nav">Notes</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav active">Contact</a>
+                <a href="profile.html" class="btn-nav">Profile</a>
+            </nav>
+        </div>
+    </header>
+    <main class="page-wrapper">
+    <div class="centered-card card feedback-card">
+            <h2>Contact Us</h2>
+            <p>If you have any questions, feedback, or need support, please reach out to us:</p>
+            <ul>
+                <li>Email: <a href="mailto:vikashkumar13228@gmail.com">vikashkumar13228@gmail.com</a></li>
+                
+                <li>Phone: +91-12345-67890</li>
+            </ul>
+            <p>We value your input and strive to make College NoteShare better for everyone!</p>
+            <hr>
+            <h3>Send Feedback</h3>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="fb-name">Your Name</label>
+                    <input type="text" id="fb-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="fb-email">Email</label>
+                    <input type="email" id="fb-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="fb-message">Message</label>
+                    <textarea id="fb-message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Feedback</button>
+                <div id="fb-status" style="margin-top:0.5rem;color:green;display:none"></div>
+            </form>
+        </div>
+    </main>
+     
+  <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+            Empowering students with collaborative learning through shared knowledge and resources.
+          </p>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+            contact@collegenoteshare.com
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+          &copy; 2023 College NoteShare. All rights reserved. 
+          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+          </span>
+        </p>
+      </div>
+    </div>
+  </footer>
+    <script>
+        const fbForm = document.getElementById('feedback-form');
+        if (fbForm) {
+            fbForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('fb-name').value;
+                const email = document.getElementById('fb-email').value;
+                const message = document.getElementById('fb-message').value;
+                const status = document.getElementById('fb-status');
+                try {
+                    const url = (window.location && window.location.origin ? window.location.origin : '') + '/api/feedback';
+                    console.log('Posting feedback to', url);
+                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, message }) });
+                    let data;
+                    const text = await res.text();
+                    try { data = JSON.parse(text); } catch (e) { data = null; }
+                    console.log('Feedback response status', res.status, text);
+                    if (res.ok) {
+                        status.classList.remove('error');
+                        status.classList.add('success');
+                        status.classList.add('visible');
+                        status.textContent = (data && data.message) ? data.message : (text || 'Thanks for your feedback!');
+                        status.style.display = 'block';
+                        fbForm.reset();
+                    } else {
+                        status.classList.remove('success');
+                        status.classList.add('error');
+                        status.classList.add('visible');
+                        status.textContent = (data && data.message) ? data.message : (text || 'Failed to send feedback.');
+                        status.style.display = 'block';
+                    }
+                } catch (err) {
+                    status.classList.remove('success');
+                    status.classList.add('error');
+                    status.classList.add('visible');
+                    status.style.display = 'block';
+                    status.textContent = 'Network error: ' + err.message;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

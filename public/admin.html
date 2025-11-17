@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container { display: none; }
+        .table-container { margin-top: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button.small-btn { padding: 5px 10px; margin-right: 5px; }
+        .btn-danger { background-color: #f44336; color: white; border: none; cursor: pointer; }
+        .btn-safe { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
+        <div class="container">
+            <a href="index.html" class="logo" style="color:#fff; font-weight:800; font-size:2rem; letter-spacing:-1px;">Admin Panel</a>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav">Contact</a>
+                <a href="profile.html" class="btn-nav">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-wrapper container">
+        <!-- Login View -->
+        <div id="login-view">
+            <div class="card centered-card" style="max-width: 400px;">
+                <h2>Admin / Faculty Login</h2>
+                <form id="admin-login-form">
+                    <div class="form-group"><input type="email" id="email" placeholder="Email" required></div>
+                    <div class="form-group"><input type="password" id="password" placeholder="Password" required></div>
+                    <button type="submit" class="btn-submit">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View (hidden by default) -->
+        <div id="dashboard-view" class="dashboard-container">
+            <h1 id="welcome-message">Welcome!</h1>
+            <button id="logout-btn" class="btn-danger">Logout</button>
+            <a href="admin-dashboard.html" class="btn-nav" style="margin-left:1rem;">Analytics</a>
+            
+            <div id="admin-only-content">
+                <h2>User Management</h2>
+                <div class="table-container">
+                    <table id="users-table">
+                        <thead><tr><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody><!-- User data will be loaded here --></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h2>Note Management</h2>
+            <div class="table-container">
+                <table id="notes-table">
+                    <thead><tr><th>Title</th><th>Subject</th><th>Branch</th><th>Year</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody><!-- Note data will be loaded here --></tbody>
+                </table>
+            </div>
+
+            <h2>Faculty Management</h2>
+            <div class="table-container">
+                <table id="faculty-table">
+                    <thead><tr><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody><!-- Faculty data will be loaded here --></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+    <script>
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const adminOnlyContent = document.getElementById('admin-only-content');
+        
+        const API_URL = 'http://localhost:5000';
+        
+        // Use the same token/user as main login (authToken/authUser)
+        function checkLogin() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('authUser'));
+                if (token && user && (user.role === 'admin' || user.role === 'faculty')) {
+                loginView.style.display = 'none';
+                dashboardView.style.display = 'block';
+                welcomeMessage.textContent = `Welcome, ${user.email} (${user.role})`;
+                if(user.role === 'admin') {
+                    adminOnlyContent.style.display = 'block';
+                    loadUsers(token);
+                    loadFaculty(token);
+                } else {
+                    adminOnlyContent.style.display = 'none';
+                }
+                loadNotes(token);
+            } else {
+                loginView.style.display = 'block';
+                dashboardView.style.display = 'none';
+            }
+        }
+
+        adminLoginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const res = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                if (data.user.role === 'user') {
+                    alert('Access denied. This panel is for Admins and Faculty only.');
+                    return;
+                }
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('authUser', JSON.stringify(data.user));
+                checkLogin();
+            } else {
+                alert('Login failed: ' + data.message);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authUser');
+            checkLogin();
+        });
+
+        async function loadUsers(token) {
+            const res = await fetch(`${API_URL}/api/admin/users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const users = await res.json();
+            const tableBody = document.getElementById('users-table').querySelector('tbody');
+            tableBody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td>${user.isBlocked ? 'Blocked' : 'Active'}</td>
+                    <td>
+                        ${user.isBlocked 
+                            ? `<button class="small-btn btn-safe" onclick="unblockUser('${user._id}')">Unblock</button>` 
+                            : `<button class="small-btn btn-danger" onclick="blockUser('${user._id}')">Block</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadNotes(token) {
+            const res = await fetch(`${API_URL}/api/admin/notes`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const notes = await res.json();
+            const tableBody = document.getElementById('notes-table').querySelector('tbody');
+            tableBody.innerHTML = notes.map(note => {
+                const fileUrl = note.filePath.replace('uploads', '/uploads').replace('\\', '/');
+                let actions = `<button class="small-btn btn-primary" onclick="window.open('${fileUrl}', '_blank')">Preview</button>`;
+                if(note.status === 'pending') {
+                    actions += ` <button class="small-btn btn-safe" onclick="acceptNote('${note._id}')">Accept</button>`;
+                    actions += ` <button class="small-btn btn-danger" onclick="rejectNote('${note._id}')">Reject</button>`;
+                }
+                actions += ` <button class="small-btn btn-danger" onclick="deleteNote('${note._id}')">Delete</button>`;
+                // edit buttons
+                actions += ` <button class="small-btn" onclick="editNoteField('${note._id}','title')">Edit Title</button>`;
+                actions += ` <button class="small-btn" onclick="editNoteField('${note._id}','branch')">Edit Branch</button>`;
+                return `
+                <tr>
+                    <td>${note.title}</td>
+                    <td>${note.subject}</td>
+                    <td>${note.branch || 'N/A'}</td>
+                    <td>${note.year}</td>
+                    <td>${note.status || 'pending'}</td>
+                    <td>${actions}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Load faculty list into faculty-table (admins only)
+        async function loadFaculty(token) {
+            const res = await fetch(`${API_URL}/api/admin/users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const users = await res.json();
+            const tableBody = document.getElementById('faculty-table').querySelector('tbody');
+            // show all users who are faculty or can be promoted
+            tableBody.innerHTML = users.map(u => {
+                const isFaculty = u.role === 'faculty';
+                const promoteBtn = isFaculty ? `<button class="small-btn btn-danger" onclick="changeRole('${u._id}','user')">Revoke Faculty</button>` : `<button class="small-btn btn-safe" onclick="changeRole('${u._id}','faculty')">Promote to Faculty</button>`;
+                return `
+                <tr>
+                    <td>${u.email}</td>
+                    <td>${u.role || 'user'}</td>
+                    <td>${u.isBlocked ? 'Blocked' : 'Active'}</td>
+                    <td>${promoteBtn}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        async function changeRole(userId, role) {
+            if (!confirm('Change role for this user?')) return;
+            const token = localStorage.getItem('authToken');
+            const res = await fetch(`${API_URL}/api/admin/user/${userId}/role`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ role })
+            });
+            if (res.ok) {
+                await loadUsers(token);
+                await loadFaculty(token);
+                alert('Role updated');
+            } else {
+                const txt = await res.text();
+                alert('Failed to update role: ' + txt);
+            }
+        }
+
+        async function acceptNote(id) {
+            if (!confirm('Accept this note?')) return;
+            const token = localStorage.getItem('authToken');
+            await fetch(`${API_URL}/api/admin/notes/${id}/accept`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }});
+            loadNotes(token);
+        }
+
+        async function rejectNote(id) {
+            if (!confirm('Reject this note?')) return;
+            const token = localStorage.getItem('authToken');
+            await fetch(`${API_URL}/api/admin/notes/${id}/reject`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }});
+            loadNotes(token);
+        }
+        
+        async function blockUser(id) {
+            if (!confirm('Are you sure you want to block this user?')) return;
+            const token = localStorage.getItem('authToken');
+            await fetch(`${API_URL}/api/admin/users/${id}/block`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }});
+            loadUsers(token);
+        }
+        
+        async function unblockUser(id) {
+            if (!confirm('Are you sure you want to unblock this user?')) return;
+            const token = localStorage.getItem('authToken');
+            await fetch(`${API_URL}/api/admin/users/${id}/unblock`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }});
+            loadUsers(token);
+        }
+        
+        async function deleteNote(id) {
+            if (!confirm('Are you sure you want to delete this note permanently?')) return;
+            const token = localStorage.getItem('authToken');
+            await fetch(`${API_URL}/api/admin/notes/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+            loadNotes(token);
+        }
+        
+        // Initial check
+        checkLogin();
+    </script>
+    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+            Empowering students with collaborative learning through shared knowledge and resources.
+          </p>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+            contact@collegenoteshare.com
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+          &copy; 2023 College NoteShare. All rights reserved. 
+          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+          </span>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

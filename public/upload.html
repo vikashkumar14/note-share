@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Notes - NoteShare</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+</head>
+<body>
+    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
+        <div class="container">
+            <a href="index.html" class="logo" style="color:#0566f7; font-weight:800; font-size:2rem; letter-spacing:-1px;">College NoteShare</a>
+            <nav class="main-nav">
+                <a href="Notes.html" class="btn-nav active">Notes</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav">Contact</a>
+                <a href="profile.html" class="btn-nav">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <section id="upload-section" style="background: linear-gradient(120deg, #e0e7ff 0%, #f7f9fc 100%); padding: 60px 0 30px 0; min-height: 100vh;">
+        <div class="container" style="position:relative;">
+            <div style="position:absolute;right:30px;top:-30px;z-index:2;animation:floatIcon 2.5s ease-in-out infinite alternate;pointer-events:none;">
+                <i class="fas fa-cloud-upload-alt" style="font-size:3.2rem;color:#6a11cb;opacity:0.18;"></i>
+            </div>
+            <div class="card centered-card upload-card" style="backdrop-filter: blur(12px); background: rgba(255,255,255,0.88); box-shadow: 0 8px 32px rgba(90,103,216,0.08); border-radius: 18px; border: 3px solid; border-image: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%) 1; animation: border-fade 2.5s linear infinite alternate; margin: 0 auto;">
+                <div class="upload-layout">
+                    <div class="upload-form-column">
+                        <h2 style="text-align:left;">Upload Your Notes</h2>
+                        <p style="color:#6a11cb;font-size:1.05rem;margin-bottom:1.2rem;opacity:0.9;">Share your knowledge with the community. Fields marked with * are required.</p>
+
+                        <form id="upload-form">
+                            <div class="form-group">
+                                <label for="note-title">Note Title*</label>
+                                <input type="text" id="note-title" name="title" required placeholder="e.g., Chapter 1: Introduction to AI">
+                            </div>
+                            <div class="form-group">
+                                <label for="note-subject">Subject*</label>
+                                <input type="text" id="note-subject" name="subject" required placeholder="e.g., Computer Science">
+                            </div>
+                            <div class="form-group">
+                                <label for="note-branch">Branch*</label>
+                                <select id="note-branch" name="branch" required>
+                                    <option value="">Select Branch</option>
+                                    <option value="CS">CS</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="ME">ME</option>
+                                    <option value="EE">EE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="BCA">BCA</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="note-year">Year*</label>
+                                <select id="note-year" name="year" required>
+                                    <option value="">Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="note-semester">Semester*</label>
+                                <select id="note-semester" name="semester" required>
+                                    <option value="">Select Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5">Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="note-tags">Tags (comma separated)</label>
+                                <input type="text" id="note-tags" name="tags" placeholder="e.g., Maths, BCA, Physics">
+                            </div>
+                            <div class="form-group">
+                                <label for="note-file">Upload File* (.pdf, .docx)</label>
+                                <input type="file" id="note-file" name="note-file" required>
+                            </div>
+
+                            <div id="dropzone" class="dropzone">
+                                <div class="dz-content">Drag & drop your file here, or click to select</div>
+                                <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-top:0.6rem;">
+                                    <div id="dz-fileinfo" class="dz-fileinfo" style="display:none;"></div>
+                                    <button id="dz-remove" class="dz-remove" type="button" style="display:none;">Remove</button>
+                                </div>
+                            </div>
+
+                            <div id="upload-progress" class="upload-progress" style="display:none;">
+                                <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                                <div style="display:flex; align-items:center; justify-content:space-between; gap:0.8rem; margin-top:6px;">
+                                    <div id="progress-text" style="font-size:0.95rem;color:#444;">0%</div>
+                                    <button id="cancel-upload" class="btn-cancel" type="button">Cancel</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit">Upload & Share</button>
+                        </form>
+                    </div>
+
+                    <aside class="upload-sidebar">
+                        <h3 style="margin-top:0;color:#2d2d2d;">Upload Tips</h3>
+                        <ul style="margin-top:0.6rem;color:#444;line-height:1.6;">
+                            <li>Prefer PDF files for consistent previews.</li>
+                            <li>Use clear titles and tags so others can discover your notes.</li>
+                            <li>Keep file size under 10MB for faster uploads.</li>
+                        </ul>
+                        <div style="margin-top:1rem; color:#6a11cb; font-size:1.4rem; display:flex; align-items:center; gap:0.6rem;"><i class="fas fa-cloud-upload-alt"></i> Quick preview</div>
+                    </aside>
+                </div>
+            </div>
+            <!-- Styles are fine, no change needed -->
+        </div>
+    </section>
+
+    
+  <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+            Empowering students with collaborative learning through shared knowledge and resources.
+          </p>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+            contact@collegenoteshare.com
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+          &copy; 2023 College NoteShare. All rights reserved. 
+          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+          </span>
+        </p>
+      </div>
+    </div>
+  </footer>
+    <!-- ✅ बदला गया: जावास्क्रिप्ट को और ज़्यादा स्मार्ट बनाया गया है -->
+    <script>
+        (function(){
+            const form = document.getElementById('upload-form');
+            const fileInput = document.getElementById('note-file');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const dropzone = document.getElementById('dropzone');
+            const dzFileinfo = document.getElementById('dz-fileinfo');
+            const progressWrap = document.getElementById('upload-progress');
+            const progressFill = document.querySelector('.progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+            const ALLOWED = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+
+            // Dropzone interactions
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dz-over'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dz-over'));
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault(); dropzone.classList.remove('dz-over');
+                const f = e.dataTransfer.files && e.dataTransfer.files[0];
+                if (f) {
+                    fileInput.files = e.dataTransfer.files; // set file input
+                    showFileInfo(f);
+                }
+            });
+
+            fileInput.addEventListener('change', () => {
+                const f = fileInput.files[0];
+                if (f) showFileInfo(f);
+            });
+
+            function showFileInfo(file){
+                dzFileinfo.style.display = 'block';
+                dzFileinfo.textContent = `${file.name} — ${(file.size/1024/1024).toFixed(2)} MB`;
+            }
+
+            let currentXhr = null;
+
+            const dzRemove = document.getElementById('dz-remove');
+            const cancelBtn = document.getElementById('cancel-upload');
+
+            dzRemove.addEventListener('click', () => {
+                fileInput.value = '';
+                dzFileinfo.style.display = 'none';
+                dzRemove.style.display = 'none';
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                if (currentXhr) {
+                    currentXhr.abort();
+                    currentXhr = null;
+                    progressText.textContent = 'Cancelled';
+                    progressWrap.style.display = 'none';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Upload & Share';
+                }
+            });
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('You must be logged in to upload notes!');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                if (!file) { alert('Please select a file to upload.'); return; }
+                if (file.size > MAX_SIZE) { alert('File too large. Maximum 10MB allowed.'); return; }
+                if (!ALLOWED.includes(file.type) && !file.name.match(/\.(pdf|docx|doc)$/i)) { alert('Invalid file type. Use PDF or DOCX.'); return; }
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Uploading...';
+                progressWrap.style.display = 'block';
+
+                const xhr = new XMLHttpRequest();
+                currentXhr = xhr;
+                const fd = new FormData(form);
+
+                xhr.upload.addEventListener('progress', (ev) => {
+                    if (ev.lengthComputable) {
+                        const pct = Math.round((ev.loaded / ev.total) * 100);
+                        progressFill.style.width = pct + '%';
+                        progressText.textContent = pct + '%';
+                    }
+                });
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        currentXhr = null;
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Upload & Share';
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            try {
+                                const res = JSON.parse(xhr.responseText);
+                                alert(res.message || 'Uploaded successfully!');
+                                form.reset();
+                                dzFileinfo.style.display = 'none';
+                                progressWrap.style.display = 'none';
+                                progressFill.style.width = '0%';
+                                window.location.href = 'index.html#notes-section';
+                            } catch (err) {
+                                alert('Upload complete.');
+                            }
+                        } else {
+                            console.error('Upload error:', xhr.responseText);
+                            alert('Upload failed. Check console for details.');
+                        }
+                    }
+                };
+
+                xhr.open('POST', 'http://localhost:5000/api/upload', true);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                xhr.send(fd);
+            });
+        })();
+    </script>
+</body>
+</html>
