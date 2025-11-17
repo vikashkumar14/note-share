@@ -123,7 +123,8 @@
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const res = await fetch('http://localhost:5000/api/auth/login', {
+            const res = await fetch("https://noteshare-y2kp.onrender.com/api/auth/login", {
+
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email, password })
             });
@@ -153,7 +154,7 @@
             const branch = document.getElementById('register-branch').value;
             const college = document.getElementById('register-college').value;
             const passingYear = document.getElementById('register-passing').value;
-            const res = await fetch('http://localhost:5000/api/auth/register', {
+            const res = await fetch("https://note-share-yfyr.onrender.com/api/auth/register", {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
             });
@@ -173,47 +174,5 @@
         infoMsg.innerHTML = 'Login with your <b>Admin</b>, <b>Faculty</b>, or <b>User</b> account. All roles use the same login form.';
         document.querySelector('.centered-card').insertBefore(infoMsg, document.getElementById('login-form'));
     </script>
-    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-        <div>
-          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
-          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
-            Empowering students with collaborative learning through shared knowledge and resources.
-          </p>
-        </div>
-        <div>
-          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
-            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
-            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
-            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
-          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
-          </div>
-          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
-            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
-            contact@collegenoteshare.com
-          </p>
-        </div>
-      </div>
-      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
-        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
-          &copy; 2023 College NoteShare. All rights reserved. 
-          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
-            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
-          </span>
-        </p>
-      </div>
-    </div>
-  </footer>
 </body>
 </html>
