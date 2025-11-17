@@ -1,7 +1,13 @@
-
 // Admin panel logic for note verification and preview
 document.addEventListener('DOMContentLoaded', function() {
-    const API_URL = 'http://localhost:5000';
+    // Detect API URL
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000'
+        : 'https://noteshare-y2kp.onrender.com';
+    
+    // Store API_URL globally for use in other functions
+    window.API_URL = API_URL;
+    
     const token = localStorage.getItem('authToken');
     const user = JSON.parse(localStorage.getItem('authUser'));
     if (!user || (user.role !== 'admin' && user.role !== 'faculty')) {
@@ -13,15 +19,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function loadNotes() {
-    const API_URL = 'http://localhost:5000';
+    const API_URL = window.API_URL || 'http://localhost:5000';
     const token = localStorage.getItem('authToken');
     const res = await fetch(`${API_URL}/api/admin/notes`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     const notes = await res.json();
+    console.log('Loaded notes:', notes); // Debug
     const tableBody = document.getElementById('notes-table').querySelector('tbody');
     tableBody.innerHTML = notes.map(note => {
-        const fileUrl = note.filePath.replace('uploads', '/uploads').replace('\\', '/').replace('\\', '/');
+        const API_URL = window.API_URL || 'http://localhost:5000';
+        const fileUrl = `${API_URL}/${note.filePath.replace(/\\/g, '/')}`;
     let actions = `<button class="small-btn btn-primary" onclick="window.open('${fileUrl}', '_blank')">Preview</button>`;
         if(note.status === 'pending') {
             actions += ` <button class="small-btn btn-safe" onclick="acceptNote('${note._id}')">Accept</button>`;
@@ -53,7 +61,7 @@ async function loadNotes() {
         if (!allowed.includes(field)) return alert('Invalid field');
         const value = prompt(`Enter new value for ${field}`);
         if (value === null) return;
-        const res = await fetch(`http://localhost:5000/api/admin/notes/${id}`, {
+        const res = await fetch(`${window.API_URL || 'http://localhost:5000'}/api/admin/notes/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ [field]: value })
@@ -68,13 +76,14 @@ async function loadNotes() {
     }
 
 async function acceptNote(id) {
-    const API_URL = 'http://localhost:5000';
+    const API_URL = window.API_URL || 'http://localhost:5000';
     const token = localStorage.getItem('authToken');
     if (!confirm('Accept this note?')) return;
-    await fetch(`${API_URL}/api/admin/notes/${id}/accept`, {
+    const res = await fetch(`${API_URL}/api/admin/notes/${id}/accept`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
     });
+    console.log('Accept response:', res.status);
     loadNotes();
 }
 
@@ -84,35 +93,40 @@ async function editNoteField(id, field) {
     if (!['title','branch'].includes(field)) return alert('Unsupported field');
     const value = prompt(`Enter new ${field}`);
     if (value === null) return;
-    const res = await fetch(`http://localhost:5000/api/admin/notes/${id}`, {
+    const API_URL = window.API_URL || 'http://localhost:5000';
+    const res = await fetch(`${API_URL}/api/admin/notes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ [field]: value })
     });
     if (res.ok) {
-        alert('Updated');
+        alert('Updated successfully!');
+        console.log('Update success for field:', field);
         loadNotes();
     } else {
         const txt = await res.text();
+        console.error('Update error:', txt);
         alert('Error: ' + txt);
     }
 }
 
 async function rejectNote(id) {
-    const API_URL = 'http://localhost:5000';
+    const API_URL = window.API_URL || 'http://localhost:5000';
     const token = localStorage.getItem('authToken');
     if (!confirm('Reject this note?')) return;
-    await fetch(`${API_URL}/api/admin/notes/${id}/reject`, {
+    const res = await fetch(`${API_URL}/api/admin/notes/${id}/reject`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
     });
+    console.log('Reject response:', res.status);
     loadNotes();
 }
 
 async function deleteNote(id) {
-    const API_URL = 'http://localhost:5000';
+    const API_URL = window.API_URL || 'http://localhost:5000';
     const token = localStorage.getItem('authToken');
     if (!confirm('Are you sure you want to delete this note permanently?')) return;
-    await fetch(`${API_URL}/api/admin/notes/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+    const res = await fetch(`${API_URL}/api/admin/notes/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+    console.log('Delete response:', res.status);
     loadNotes();
 }
