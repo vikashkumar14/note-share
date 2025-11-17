@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login / Register - College NoteShare</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -42,11 +43,11 @@
                 <button type="submit" class="btn-submit">Login</button>
             </form>
             
-            <!-- Register Form (Initially Hidden) -->
+            <!-- Register Form -->
             <form id="register-form" style="display: none;">
                 <h2>Create Account</h2>
                 <div class="form-group">
-                    <label for="register-name">Name</label>
+                    <label for="register-name">Full Name</label>
                     <input type="text" id="register-name" required>
                 </div>
                 <div class="form-group">
@@ -55,7 +56,7 @@
                 </div>
                 <div class="form-group">
                     <label for="register-password">Password</label>
-                    <input type="password" id="register-password" required minlength="6">
+                    <input type="password" id="register-password" required>
                 </div>
                 <div class="form-group">
                     <label for="register-semester">Semester</label>
@@ -81,70 +82,79 @@
                         <option value="CE">Civil</option>
                         <option value="EE">Electrical</option>
                         <option value="IT">Information Technology</option>
-                       
-                        <option value="BCA">Bachelor of Computer Application/option>
-                        <option value="Other">Other</option>
+                        <option value="BCA">Bachelor of Computer Application</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="register-college">College</label>
+                    <label for="register-college">College Name</label>
                     <input type="text" id="register-college" required>
                 </div>
                 <div class="form-group">
                     <label for="register-passing">Passing Year</label>
-                    <input type="number" id="register-passing" min="2000" max="2100" required>
+                    <input type="number" id="register-passing" required>
                 </div>
                 <button type="submit" class="btn-submit">Register</button>
             </form>
         </div>
     </main>
-    <script src="script.js"></script> <!-- कॉमन स्क्रिप्ट -->
+
+    <script src="script.js"></script>
     <script>
         // Tab switching logic
         const tabs = document.querySelectorAll('.auth-tab-btn');
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
+        
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                if (tab.dataset.form === 'login-form') {
-                    loginForm.style.display = 'block';
-                    registerForm.style.display = 'none';
-                } else {
-                    loginForm.style.display = 'none';
-                    registerForm.style.display = 'block';
-                }
+                loginForm.style.display = tab.dataset.form === 'login-form' ? 'block' : 'none';
+                registerForm.style.display = tab.dataset.form === 'register-form' ? 'block' : 'none';
             });
         });
         
-        // Login Logic
+        // 🔵 LOGIN Logic
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const res = await fetch("https://noteshare-y2kp.onrender.com/api/auth/login", {
-
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                localStorage.setItem('authToken', data.token);
-                localStorage.setItem('authUser', JSON.stringify(data.user));
-                localStorage.setItem('userId', data.user._id); // <-- Set userId for Save Note
-                alert('Login successful!');
-                if (data.user.role === 'admin' || data.user.role === 'faculty') {
-                    window.location.href = 'admin.html';
+            
+            // Detect API URL - use localhost in development, Render in production
+            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:5000'
+                : 'https://noteshare-y2kp.onrender.com';
+            
+            try {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                console.log('Login Response:', data);
+                
+                if (res.ok) {
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('authUser', JSON.stringify(data.user));
+                    localStorage.setItem('userId', data.user._id);
+                    alert('Login successful!');
+                    if (data.user.role === 'admin' || data.user.role === 'faculty') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 } else {
-                    window.location.href = 'index.html';
+                    alert('Error: ' + (data.message || 'Login failed'));
                 }
-            } else {
-                alert('Error: ' + data.message);
+            } catch (err) {
+                console.error('Login error:', err);
+                alert('Connection error: ' + err.message);
             }
         });
         
-        // Register Logic
+        // 🟢 REGISTER Logic
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('register-name').value;
@@ -154,25 +164,39 @@
             const branch = document.getElementById('register-branch').value;
             const college = document.getElementById('register-college').value;
             const passingYear = document.getElementById('register-passing').value;
-            const res = await fetch("https://note-share-yfyr.onrender.com/api/auth/register", {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert(data.message + ' Please login now.');
-                // Switch to login tab after successful registration
-                document.querySelector('[data-form="login-form"]').click();
-            } else {
-                alert('Error: ' + data.message);
+            
+            // Detect API URL
+            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:5000'
+                : 'https://noteshare-y2kp.onrender.com';
+            
+            try {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
+                });
+                
+                const data = await res.json();
+                console.log('Register Response:', data);
+                
+                if (res.ok) {
+                    alert('Account created! Please login with your credentials.');
+                    tabs[0].click();
+                    document.getElementById('login-email').value = email;
+                } else {
+                    alert('Error: ' + (data.message || 'Registration failed'));
+                }
+            } catch (err) {
+                console.error('Register error:', err);
+                alert('Connection error: ' + err.message);
             }
         });
-
-        // Show info message for all roles
-        const infoMsg = document.createElement('div');
-        infoMsg.style = 'margin-bottom:1rem;color:#1976d2;font-size:1.05rem;text-align:center;';
-        infoMsg.innerHTML = 'Login with your <b>Admin</b>, <b>Faculty</b>, or <b>User</b> account. All roles use the same login form.';
-        document.querySelector('.centered-card').insertBefore(infoMsg, document.getElementById('login-form'));
     </script>
+
+    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+        <!-- Footer code same as before -->
+    </footer>
+    <script src="mobile-menu.js"></script>
 </body>
 </html>
