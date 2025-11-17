@@ -1,73 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Saved Notes - NoteShare</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
-        <div class="container">
-            <a href="index.html" class="logo" style="color:#006aff; font-weight:800; font-size:2rem; letter-spacing:-1px;">College NoteShare</a>
-            <nav class="main-nav">
-                <a href="Notes.html" class="btn-nav">Notes</a>
-                <a href="upload.html" class="btn-nav">Upload Note</a>
-                <a href="auth.html" class="btn-nav">Login</a>
-                <a href="about.html" class="btn-nav">About</a>
-                <a href="contact.html" class="btn-nav">Contact</a>
-                <a href="profile.html" class="btn-nav">Profile</a>
-            </nav>
-        </div>
-    </header>
-    <main class="page-wrapper container">
-        <h1>Saved Notes</h1>
-        <div id="saved-notes-list">
-            <p style="color:#888;">Loading...</p>
-        </div>
-    </main>
-     
-  <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-        <div>
-          <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
-          <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
-            Empowering students with collaborative learning through shared knowledge and resources.
-          </p>
-        </div>
-        <div>
-          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
-            <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
-            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
-            <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
-          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
-            <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
-          </div>
-          <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
-            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
-            contact@collegenoteshare.com
-          </p>
-        </div>
-      </div>
-      <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
-        <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
-          &copy; 2023 College NoteShare. All rights reserved. 
-          <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
-            Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
-          </span>
-        </p>
-      </div>
-    </div>
-  </footer>
-    <script src="savednotes.js"></script>
-</body>
-</html>
+// savednotes.js - Show user's saved notes
+// ✅ Already updated with Render URL
+
+document.addEventListener('DOMContentLoaded', async function() {
+    let userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+        const user = JSON.parse(localStorage.getItem('authUser'));
+        if (user && user._id) userId = user._id;
+    }
+    
+    const savedList = document.getElementById('saved-notes-list');
+    
+    if (!userId) {
+        savedList.innerHTML = '<p style="color:#f44336;">Please login to view your saved notes.</p>';
+        return;
+    }
+    
+    try {
+        // ✅ Line 1: Render URL
+        const res = await fetch(`https://noteshare-y2kp.onrender.com/api/user/saved-notes?userId=${userId}`);
+        
+        if (!res.ok) throw new Error('Server error');
+        
+        const notes = await res.json();
+        console.log('Saved notes:', notes);
+        
+        if (!notes || notes.length === 0) {
+            savedList.innerHTML = '<p style="color:#888;">You have not saved any notes yet.</p>';
+            return;
+        }
+        
+        savedList.innerHTML = '';
+        notes.forEach(note => {
+            const div = document.createElement('div');
+            div.className = 'note-card';
+            div.style = 'background:#fff; border-radius:14px; box-shadow:0 2px 16px #f4433633; padding:1.2rem; margin-bottom:1rem;';
+            
+            // ✅ Line 2: Complete file URL with Render domain
+            const fileUrl = `https://noteshare-y2kp.onrender.com/${note.filePath.replace(/\\/g, '/')}`;
+            
+            div.innerHTML = `
+                <h3 style="font-size:1.15rem; font-weight:700; color:#2d2d2d; margin-bottom:0.3rem;">${note.title}</h3>
+                <div style="font-size:0.98rem; color:#555; margin-bottom:0.4rem;">
+                    <span><strong>Subject:</strong> ${note.subject}</span><br>
+                    <span><strong>Year:</strong> ${note.year} | <strong>Semester:</strong> ${note.semester}</span>
+                </div>
+                <div style="margin-bottom:0.7rem;">
+                    <a href="${fileUrl}" target="_blank" download style="color:#ff9800; font-weight:700;">Download</a>
+                </div>
+            `;
+            
+            savedList.appendChild(div);
+        });
+        
+    } catch (err) {
+        console.error('Error:', err);
+        savedList.innerHTML = '<p style="color:#f44336;">Error loading saved notes.</p>';
+    }
+});
