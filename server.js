@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-that-should-be-long-and-random';
 // ==================== CORS CONFIGURATION ====================
 app.use(express.json());
-app.use(cors({
+const corsOptions = {
   origin: [
     'https://noteshare-y2kp.onrender.com',
     'https://note-share-yfyr.onrender.com',
@@ -23,8 +23,28 @@ app.use(cors({
     'http://localhost:5500',
     'http://127.0.0.1:5500'
   ],
-  credentials: true
-}));
+  credentials: true,
+  optionsSuccessStatus: 204,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+};
+app.use(cors(corsOptions));
+// Explicitly handle preflight across all routes (Express 5 safe)
+const allowedOrigins = new Set(corsOptions.origin);
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.has(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Vary', 'Origin');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
+      res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(', '));
+      return res.sendStatus(corsOptions.optionsSuccessStatus || 204);
+    }
+  }
+  next();
+});
 // ==================== MONGODB CONNECTION ====================
 const connectionString = 'mongodb+srv://vk5457396_db_user:v5g645b696pIetlC@noteshare.tpxb0en.mongodb.net/noteshare?retryWrites=true&w=majority&tls=true';
 const connectionOptions = {
