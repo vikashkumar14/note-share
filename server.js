@@ -8,10 +8,12 @@ const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+
 // ==================== APP INITIALIZATION ====================
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-that-should-be-long-and-random';
+
 // ==================== CORS CONFIGURATION ====================
 app.use(express.json());
 
@@ -21,25 +23,22 @@ const STATIC_ALLOWED_ORIGINS = [
   'http://localhost:5000',
   'http://127.0.0.1:5000',
   'http://localhost:5500',
-  'http://127.0.0.1:5500'
-  "http://localhost:5000",
-  "http://localhost:5500",
-  "https://*.vercel.app",
-  "https://**.vercel.app",
-  "https://vikashkumar14s-projects.vercel.app",
-  "https://your-backend-hosted-url.com",
+  'http://127.0.0.1:5500',
+  'https://vikashkumar14s-projects.vercel.app'
 ];
 
 function isOriginAllowed(origin) {
   if (!origin) return true; // non-browser or same-origin
   if (STATIC_ALLOWED_ORIGINS.includes(origin)) return true;
+  
   try {
     const u = new URL(origin);
     // Allow Vercel preview deployments under this project space
-    if (u.protocol === 'https:' && (u.hostname.endsWith('.vercel.app') || u.hostname.endsWith('.vikashkumar14s-projects.vercel.app'))) {
+    if (u.protocol === 'https:' && (u.hostname.endsWith('.vercel.app'))) {
       return true;
     }
   } catch (e) { /* ignore */ }
+  
   return false;
 }
 
@@ -71,34 +70,50 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 // ==================== MONGODB CONNECTION ====================
 const connectionString = 'mongodb+srv://vk5457396_db_user:v5g645b696pIetlC@noteshare.tpxb0en.mongodb.net/noteshare?retryWrites=true&w=majority&tls=true';
 const connectionOptions = {
   serverSelectionTimeoutMS: 5000
 };
+
 mongoose.connect(connectionString, connectionOptions)
   .then(() => console.log('✓ MongoDB connection successful with TLS enabled'))
   .catch(err => {
     console.error('✗ CRITICAL MongoDB Connection Error:', err);
   });
+
 // ==================== MODELS ====================
 const User = require('./models/user');
 const Note = require('./models/note');
 const Feedback = require('./models/feedback');
+
 // ==================== MULTER CONFIGURATION ====================
+// Ensure uploads directory exists
+const ensureDir = (dirPath) => {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+};
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    const dir = path.join(__dirname, 'uploads');
+    ensureDir(dir);
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    // Clean filename to avoid issues
+    const cleanName = file.originalname.replace(/\s+/g, '-');
+    cb(null, Date.now() + '-' + cleanName);
   }
 });
 const upload = multer({ storage: storage });
+
 const avatarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, 'uploads', 'avatars');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    ensureDir(dir);
     cb(null, dir);
   },
   filename: function (req, file, cb) {
@@ -107,6 +122,7 @@ const avatarStorage = multer.diskStorage({
   }
 });
 const avatarUpload = multer({ storage: avatarStorage });
+
 // ==================== MIDDLEWARE ====================
 const protect = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -119,6 +135,7 @@ const protect = (req, res, next) => {
     return res.status(401).json({ message: 'Invalid token.' });
   }
 };
+
 const checkRole = (...roles) => (req, res, next) => {
   if (!req.user) return res.status(401).json({ message: 'Not authenticated.' });
   if (!roles.includes(req.user.role)) {
@@ -126,10 +143,13 @@ const checkRole = (...roles) => (req, res, next) => {
   }
   next();
 };
+
 // ==================== STATIC FILES ====================
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Kept "assetes" to match your frontend path
 app.use('/assetes', express.static(path.join(__dirname, 'assetes')));
+
 // ==================== AUTHENTICATION APIS ====================
 app.post('/api/auth/register', async (req, res) => {
   try {
@@ -179,6 +199,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.status(500).json({ message: 'Server error during registration.', error: error.message });
   }
 });
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -220,6 +241,7 @@ app.post('/api/auth/login', async (req, res) => {
     res.status(500).json({ message: 'Server error during login.', error: error.message });
   }
 });
+
 // ==================== NOTE UPLOAD API ====================
 app.post('/api/upload', protect, upload.single('note-file'), async (req, res) => {
   try {
@@ -256,6 +278,7 @@ app.post('/api/upload', protect, upload.single('note-file'), async (req, res) =>
     res.status(500).json({ message: 'A critical error occurred on the server.', error: err.message });
   }
 });
+
 // ==================== USER NOTES APIS ====================
 app.get('/api/user/notes', protect, async (req, res) => {
   try {
@@ -267,6 +290,7 @@ app.get('/api/user/notes', protect, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch your notes.' });
   }
 });
+
 app.get('/api/user/saved-notes/me', protect, async (req, res) => {
   try {
     const userId = req.user && req.user.userId;
@@ -278,6 +302,7 @@ app.get('/api/user/saved-notes/me', protect, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch saved notes.' });
   }
 });
+
 app.post('/api/user/save-note', async (req, res) => {
   try {
     const { userId, noteId } = req.body;
@@ -294,6 +319,7 @@ app.post('/api/user/save-note', async (req, res) => {
     res.status(500).json({ message: 'Failed to save note.' });
   }
 });
+
 // ==================== USER PROFILE APIS ====================
 app.get('/api/user/saved-notes', async (req, res) => {
   try {
@@ -309,6 +335,7 @@ app.get('/api/user/saved-notes', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch saved notes.' });
   }
 });
+
 app.put('/api/profile', protect, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -329,6 +356,7 @@ app.put('/api/profile', protect, async (req, res) => {
     res.status(500).json({ message: 'Error updating profile.', error: error.message });
   }
 });
+
 app.post('/api/user/avatar', protect, avatarUpload.single('avatar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded.' });
@@ -348,15 +376,24 @@ app.post('/api/user/avatar', protect, avatarUpload.single('avatar'), async (req,
     res.status(500).json({ message: 'Avatar upload failed.', error: err.message });
   }
 });
-// ==================== PUBLIC NOTES API ====================
+
+// ==================== PUBLIC NOTES API (Merged & Improved) ====================
 app.get('/api/notes', async (req, res) => {
   try {
     const { search = '', branch = '' } = req.query;
     let filter = { status: 'accepted' };
+
+    // Branch Filter
     if (branch) {
       filter.branch = { $regex: `^${branch}$`, $options: 'i' };
     }
-    let notes = await Note.find(filter).sort({ createdAt: -1 });
+
+    // Fetch Notes
+    let notes = await Note.find(filter)
+      .populate('uploader', 'name email') // Populate uploader details
+      .sort({ createdAt: -1 });
+
+    // Search Logic (in memory for simplicity)
     if (search) {
       const q = search.toLowerCase();
       notes = notes.filter(note =>
@@ -373,6 +410,7 @@ app.get('/api/notes', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch notes from the database.' });
   }
 });
+
 // ==================== ADMIN APIS ====================
 app.get('/api/admin/users', protect, checkRole('admin'), async (req, res) => {
   try {
@@ -382,6 +420,7 @@ app.get('/api/admin/users', protect, checkRole('admin'), async (req, res) => {
     res.status(500).json({ message: 'Error fetching users.', error: err.message });
   }
 });
+
 app.post('/api/admin/users/:id/block', protect, checkRole('admin'), async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.id, { isBlocked: true });
@@ -390,6 +429,7 @@ app.post('/api/admin/users/:id/block', protect, checkRole('admin'), async (req, 
     res.status(500).json({ message: 'Error blocking user.', error: err.message });
   }
 });
+
 app.post('/api/admin/users/:id/unblock', protect, checkRole('admin'), async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.id, { isBlocked: false });
@@ -398,6 +438,7 @@ app.post('/api/admin/users/:id/unblock', protect, checkRole('admin'), async (req
     res.status(500).json({ message: 'Error unblocking user.', error: err.message });
   }
 });
+
 app.put('/api/admin/user/:id/role', protect, checkRole('admin'), async (req, res) => {
   try {
     const { role } = req.body;
@@ -411,6 +452,7 @@ app.put('/api/admin/user/:id/role', protect, checkRole('admin'), async (req, res
     res.status(500).json({ message: 'Error updating role.', error: err.message });
   }
 });
+
 app.get('/api/admin/notes', protect, checkRole('admin', 'teacher'), async (req, res) => {
   try {
     const notes = await Note.find().sort({ createdAt: -1 });
@@ -419,6 +461,7 @@ app.get('/api/admin/notes', protect, checkRole('admin', 'teacher'), async (req, 
     res.status(500).json({ message: 'Error fetching notes.', error: err.message });
   }
 });
+
 app.post('/api/admin/notes/:id/accept', protect, checkRole('admin', 'teacher'), async (req, res) => {
   try {
     const note = await Note.findByIdAndUpdate(req.params.id, { status: 'accepted' }, { new: true });
@@ -428,6 +471,7 @@ app.post('/api/admin/notes/:id/accept', protect, checkRole('admin', 'teacher'), 
     res.status(500).json({ message: 'Error accepting note.', error: err.message });
   }
 });
+
 app.post('/api/admin/notes/:id/reject', protect, checkRole('admin', 'teacher'), async (req, res) => {
   try {
     const note = await Note.findByIdAndUpdate(req.params.id, { status: 'rejected' }, { new: true });
@@ -437,6 +481,7 @@ app.post('/api/admin/notes/:id/reject', protect, checkRole('admin', 'teacher'), 
     res.status(500).json({ message: 'Error rejecting note.', error: err.message });
   }
 });
+
 app.delete('/api/admin/notes/:id', protect, checkRole('admin', 'teacher'), async (req, res) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -452,6 +497,7 @@ app.delete('/api/admin/notes/:id', protect, checkRole('admin', 'teacher'), async
     res.status(500).json({ message: 'Error deleting note.', error: err.message });
   }
 });
+
 app.put('/api/admin/notes/:id', protect, checkRole('admin', 'teacher'), async (req, res) => {
   try {
     const allowed = ['title', 'subject', 'branch', 'year', 'semester', 'tags', 'status'];
@@ -467,6 +513,7 @@ app.put('/api/admin/notes/:id', protect, checkRole('admin', 'teacher'), async (r
     res.status(500).json({ message: 'Error updating note.', error: err.message });
   }
 });
+
 app.get('/api/admin/metrics', protect, checkRole('admin'), async (req, res) => {
   try {
     const totalNotes = await Note.countDocuments();
@@ -485,6 +532,7 @@ app.get('/api/admin/metrics', protect, checkRole('admin'), async (req, res) => {
     res.status(500).json({ message: 'Error fetching metrics.', error: err.message });
   }
 });
+
 app.get('/api/admin/feedback', protect, checkRole('admin'), async (req, res) => {
   try {
     const items = await Feedback.find().sort({ createdAt: -1 }).limit(200);
@@ -493,6 +541,7 @@ app.get('/api/admin/feedback', protect, checkRole('admin'), async (req, res) => 
     res.status(500).json({ message: 'Failed to fetch feedback.', error: err.message });
   }
 });
+
 // ==================== FEEDBACK API ====================
 app.post('/api/feedback', async (req, res) => {
   try {
@@ -505,6 +554,7 @@ app.post('/api/feedback', async (req, res) => {
     res.status(500).json({ message: 'Failed to save feedback.', error: err.message });
   }
 });
+
 // ==================== SERVER STARTUP & DEFAULTS ====================
 const ensureDefaultUsers = async () => {
   try {
@@ -548,29 +598,12 @@ const ensureDefaultUsers = async () => {
     console.error('Error creating default users:', err);
   }
 };
-// ==================== NOTES BY BRANCH ====================
-app.get('/api/notes', async (req, res) => {
-  try {
-    const { branch } = req.query;
-    if (!branch) {
-      return res.status(400).json({ message: 'Branch parameter is required' });
-    }
-    
-    const notes = await Note.find({ branch })
-      .populate('uploadedBy', 'name email')
-      .sort({ createdAt: -1 });
-      
-    res.json(notes);
-  } catch (err) {
-    console.error('Error fetching notes by branch:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
 
 // ==================== API 404 & ERROR HANDLER ====================
 app.use('/api', (req, res, next) => {
   res.status(404).json({ message: 'API endpoint not found.' });
 });
+
 app.use((err, req, res, next) => {
   console.error('Unhandled server error:', err);
   if (req.path && req.path.startsWith('/api')) {
@@ -578,13 +611,15 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
+
 // ==================== SERVER LISTEN ====================
 app.listen(PORT, async () => {
   await ensureDefaultUsers();
   console.log(`\n╔════════════════════════════════════════╗`);
-  console.log(`║  🚀 Server running on port ${PORT}        ║`);
-  console.log(`║  📊 Environment: ${process.env.NODE_ENV || 'production'}          ║`);
-  console.log(`║  🌍 CORS Enabled for Render & localhost ║`);
+  console.log(`║   🚀 Server running on port ${PORT}        ║`);
+  console.log(`║   📊 Environment: ${process.env.NODE_ENV || 'production'}          ║`);
+  console.log(`║   🌍 CORS Enabled for Render & localhost ║`);
   console.log(`╚════════════════════════════════════════╝\n`);
 });
+
 module.exports = app;
