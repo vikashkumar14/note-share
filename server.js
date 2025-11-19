@@ -22,6 +22,12 @@ const STATIC_ALLOWED_ORIGINS = [
   'http://127.0.0.1:5000',
   'http://localhost:5500',
   'http://127.0.0.1:5500'
+  "http://localhost:5000",
+  "http://localhost:5500",
+  "https://*.vercel.app",
+  "https://**.vercel.app",
+  "https://vikashkumar14s-projects.vercel.app",
+  "https://your-backend-hosted-url.com",
 ];
 
 function isOriginAllowed(origin) {
