@@ -1,207 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login / Register - College NoteShare</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header class="main-header" style="background: linear-gradient(90deg, #ff9800 0%, #f44336 100%); box-shadow: 0 4px 24px rgba(47,48,46,0.13);">
-        <div class="container">
-            <a href="index.html" class="logo" style="color:#0452fc; font-weight:800; font-size:2rem; letter-spacing:-1px;">College NoteShare</a>
-            <nav class="main-nav">
-                <a href="index.html" class="btn-nav">Home</a>
-                <a href="Notes.html" class="btn-nav">Notes</a>
-                <a href="upload.html" class="btn-nav">Upload Note</a>
-                <a href="auth.html" class="btn-nav active">Login</a>
-                <a href="about.html" class="btn-nav">About</a>
-                <a href="contact.html" class="btn-nav">Contact</a>
-                <a href="profile.html" class="btn-nav">Profile</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="page-wrapper">
-        <div class="centered-card card" style="max-width: 450px;">
-            <div class="auth-tabs">
-                <button class="auth-tab-btn active" data-form="login-form">Login</button>
-                <button class="auth-tab-btn" data-form="register-form">Register</button>
-            </div>
-            
-            <!-- Login Form -->
-            <form id="login-form">
-                <h2>Welcome Back!</h2>
-                <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" required>
-                </div>
-                <button type="submit" class="btn-submit">Login</button>
-            </form>
-            
-            <!-- Register Form -->
-            <form id="register-form" style="display: none;">
-                <h2>Create Account</h2>
-                <div class="form-group">
-                    <label for="register-name">Full Name</label>
-                    <input type="text" id="register-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-email">Email</label>
-                    <input type="email" id="register-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-password">Password</label>
-                    <input type="password" id="register-password" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-semester">Semester</label>
-                    <select id="register-semester" required>
-                        <option value="">Select Semester</option>
-                        <option value="1">Semester 1</option>
-                        <option value="2">Semester 2</option>
-                        <option value="3">Semester 3</option>
-                        <option value="4">Semester 4</option>
-                        <option value="5">Semester 5</option>
-                        <option value="6">Semester 6</option>
-                        <option value="7">Semester 7</option>
-                        <option value="8">Semester 8</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="register-branch">Branch</label>
-                    <select id="register-branch" required>
-                        <option value="">Select Branch</option>
-                        <option value="CSE">Computer Science</option>
-                        <option value="ECE">Electronics</option>
-                        <option value="ME">Mechanical</option>
-                        <option value="CE">Civil</option>
-                        <option value="EE">Electrical</option>
-                        <option value="IT">Information Technology</option>
-                        <option value="BCA">Bachelor of Computer Application</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="register-college">College Name</label>
-                    <input type="text" id="register-college" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-passing">Passing Year</label>
-                    <input type="number" id="register-passing" required>
-                </div>
-                <button type="submit" class="btn-submit">Register</button>
-            </form>
-        </div>
-    </main>
-
-    <script src="script.js"></script>
-    <script>
-        // Tab switching logic
-        const tabs = document.querySelectorAll('.auth-tab-btn');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
+<script>
+    // Tab switching logic
+    const tabs = document.querySelectorAll('.auth-tab-btn');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            loginForm.style.display = tab.dataset.form === 'login-form' ? 'block' : 'none';
+            registerForm.style.display = tab.dataset.form === 'register-form' ? 'block' : 'none';
+        });
+    });
+    
+    // Function to get API URL automatically
+    function getApiUrl() {
+        const hostname = window.location.hostname;
         
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                loginForm.style.display = tab.dataset.form === 'login-form' ? 'block' : 'none';
-                registerForm.style.display = tab.dataset.form === 'register-form' ? 'block' : 'none';
+        // Agar localhost hai, toh backend port 5000 use karo
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:5000';
+        }
+        
+        // Agar Vercel par hai, toh empty string return karo 
+        // (Isse request automatic '/api/auth/...' par jayegi same domain pe)
+        return ''; 
+    }
+
+    // 🔵 LOGIN Logic
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        // Yahan se URL automatic decide hoga
+        const API_URL = getApiUrl();
+        
+        try {
+            console.log(`Sending request to: ${API_URL}/api/auth/login`); // Debugging ke liye
+
+            const res = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, password })
             });
-        });
-        
-        // 🔵 LOGIN Logic
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
             
-            // Detect API URL - use localhost in development, Render in production
-            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:5000'
-                : 'https://noteshare-y2kp.onrender.com';
+            const data = await res.json();
+            console.log('Login Response:', data);
             
-            try {
-                const res = await fetch(`${API_URL}/api/auth/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email, password })
-                });
+            if (res.ok) {
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('authUser', JSON.stringify(data.user));
+                localStorage.setItem('userId', data.user._id);
+                alert('Login successful!');
                 
-                const data = await res.json();
-                console.log('Login Response:', data);
-                
-                if (res.ok) {
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('authUser', JSON.stringify(data.user));
-                    localStorage.setItem('userId', data.user._id);
-                    alert('Login successful!');
-                    if (data.user.role === 'admin' || data.user.role === 'faculty') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
+                if (data.user.role === 'admin' || data.user.role === 'faculty') {
+                    window.location.href = 'admin.html';
                 } else {
-                    alert('Error: ' + (data.message || 'Login failed'));
+                    window.location.href = 'index.html';
                 }
-            } catch (err) {
-                console.error('Login error:', err);
-                alert('Connection error: ' + err.message);
+            } else {
+                alert('Error: ' + (data.message || 'Login failed'));
             }
-        });
+        } catch (err) {
+            console.error('Login error:', err);
+            alert('Connection error: ' + err.message);
+        }
+    });
+    
+    // 🟢 REGISTER Logic
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const semester = document.getElementById('register-semester').value;
+        const branch = document.getElementById('register-branch').value;
+        const college = document.getElementById('register-college').value;
+        const passingYear = document.getElementById('register-passing').value;
         
-        // 🟢 REGISTER Logic
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const semester = document.getElementById('register-semester').value;
-            const branch = document.getElementById('register-branch').value;
-            const college = document.getElementById('register-college').value;
-            const passingYear = document.getElementById('register-passing').value;
+        // Yahan bhi URL automatic decide hoga
+        const API_URL = getApiUrl();
+        
+        try {
+            const res = await fetch(`${API_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
+            });
             
-            // Detect API URL
-            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:5000'
-                : 'https://noteshare-y2kp.onrender.com';
-                : "http://localhost:5000",
-                : "http://localhost:5500",
-                : "https://*.vercel.app",
-                : "https://**.vercel.app",
-                : "https://vikashkumar14s-projects.vercel.app"
+            const data = await res.json();
+            console.log('Register Response:', data);
             
-            try {
-                const res = await fetch(`${API_URL}/api/auth/register`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
-                });
-                
-                const data = await res.json();
-                console.log('Register Response:', data);
-                
-                if (res.ok) {
-                    alert('Account created! Please login with your credentials.');
-                    tabs[0].click();
-                    document.getElementById('login-email').value = email;
-                } else {
-                    alert('Error: ' + (data.message || 'Registration failed'));
-                }
-            } catch (err) {
-                console.error('Register error:', err);
-                alert('Connection error: ' + err.message);
+            if (res.ok) {
+                alert('Account created! Please login with your credentials.');
+                tabs[0].click(); // Switch to login tab
+                document.getElementById('login-email').value = email;
+            } else {
+                alert('Error: ' + (data.message || 'Registration failed'));
             }
-        });
-    </script>
-
-    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
-        <!-- Footer code same as before -->
-    </footer>
-    <script src="mobile-menu.js"></script>
-</body>
-</html>
+        } catch (err) {
+            console.error('Register error:', err);
+            alert('Connection error: ' + err.message);
+        }
+    });
+</script>
