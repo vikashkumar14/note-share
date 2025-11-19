@@ -1,107 +1,253 @@
-<script>
-    // Tab switching logic
-    const tabs = document.querySelectorAll('.auth-tab-btn');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            loginForm.style.display = tab.dataset.form === 'login-form' ? 'block' : 'none';
-            registerForm.style.display = tab.dataset.form === 'register-form' ? 'block' : 'none';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - College NoteShare</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="/assetes/icon.png">
+    <link rel="apple-touch-icon" href="/assetes/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="main-header enhanced-header">
+        <div class="container">
+            <a href="index.html" class="logo brand-pill"><img src="/assetes/icon.png" alt="Logo">College NoteShare</a>
+            <nav class="main-nav">
+                <a href="index.html" class="btn-nav">Home</a>
+                <a href="Notes.html" class="btn-nav">Notes</a>
+                <a href="upload.html" class="btn-nav">Upload Note</a>
+                <a href="auth.html" class="btn-nav active">Login</a>
+                <a href="about.html" class="btn-nav">About</a>
+                <a href="contact.html" class="btn-nav">Contact</a>
+                <a href="profile.html" class="btn-nav">Profile</a>
+            </nav>
+            <div class="mobile-header-subtitle">Baba Banda Singh Bahadur Engineering College (BBSBEC), Fatehgarh Sahib</div>
+        </div>
+    </header>
+
+    <main class="page-wrapper">
+        <div class="centered-card card" style="max-width: 450px;">
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-form="login-form">Login</button>
+                <button class="auth-tab-btn" data-form="register-form">Register</button>
+            </div>
+            
+            <form id="login-form">
+                <h2>Welcome Back!</h2>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+            
+            <form id="register-form" style="display: none;">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-semester">Semester</label>
+                    <select id="register-semester" required>
+                        <option value="">Select Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="register-branch">Branch</label>
+                    <select id="register-branch" required>
+                        <option value="">Select Branch</option>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics</option>
+                        <option value="ME">Mechanical</option>
+                        <option value="CE">Civil</option>
+                        <option value="EE">Electrical</option>
+                        <option value="IT">Information Technology</option>
+                        <option value="BCA">Bachelor of Computer Application</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="register-college">College Name</label>
+                    <input type="text" id="register-college" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-passing">Passing Year</label>
+                    <input type="number" id="register-passing" required>
+                </div>
+                <button type="submit" class="btn-submit">Register</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="main-footer" style="background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.3rem;">College NoteShare</h3>
+                    <p style="color: #bdc3c7; line-height: 1.6; font-size: 0.95rem;">
+                        Empowering students with collaborative learning through shared knowledge and resources.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Home</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="about.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">About Us</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Contact</a></li>
+                        <li><a href="#" style="color: #bdc3c7; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1.2rem; font-size: 1.1rem;">Connect With Us</h4>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: #bdc3c7; font-size: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0077B5'" onmouseout="this.style.color='#bdc3c7'"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                    <p style="color: #7f8c8d; font-size: 0.9rem; margin: 0;">
+                        <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+                        contact@collegenoteshare.com
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+                <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;">
+                    &copy; 2023 College NoteShare. All rights reserved. 
+                    <span style="display: block; margin-top: 5px; font-size: 0.85rem;">
+                        Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for students, by students.
+                    </span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="mobile-menu.js"></script>
+
+    <script>
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.auth-tab-btn');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                loginForm.style.display = tab.dataset.form === 'login-form' ? 'block' : 'none';
+                registerForm.style.display = tab.dataset.form === 'register-form' ? 'block' : 'none';
+            });
         });
-    });
-    
-    // Function to get API URL automatically
-    function getApiUrl() {
-        const hostname = window.location.hostname;
-        
-        // Agar localhost hai, toh backend port 5000 use karo
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            return 'http://localhost:5000';
+
+        // ✅ Helper Function: Automatic API URL Detector
+        function getApiUrl() {
+            const hostname = window.location.hostname;
+            // Agar Localhost hai, toh Node backend port 5000 pe call karo
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:5000';
+            }
+            // Agar Vercel hai, toh empty string return karo (Relative Path)
+            return ''; 
         }
-        
-        // Agar Vercel par hai, toh empty string return karo 
-        // (Isse request automatic '/api/auth/...' par jayegi same domain pe)
-        return ''; 
-    }
 
-    // 🔵 LOGIN Logic
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        
-        // Yahan se URL automatic decide hoga
-        const API_URL = getApiUrl();
-        
-        try {
-            console.log(`Sending request to: ${API_URL}/api/auth/login`); // Debugging ke liye
+        // 🔵 LOGIN Logic
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const API_URL = getApiUrl();
+            
+            try {
+                console.log(`Login Request to: ${API_URL}/api/auth/login`); // Debug log
 
-            const res = await fetch(`${API_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email, password })
-            });
-            
-            const data = await res.json();
-            console.log('Login Response:', data);
-            
-            if (res.ok) {
-                localStorage.setItem('authToken', data.token);
-                localStorage.setItem('authUser', JSON.stringify(data.user));
-                localStorage.setItem('userId', data.user._id);
-                alert('Login successful!');
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password })
+                });
                 
-                if (data.user.role === 'admin' || data.user.role === 'faculty') {
-                    window.location.href = 'admin.html';
+                const data = await res.json();
+                console.log('Login Response:', data);
+                
+                if (res.ok) {
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('authUser', JSON.stringify(data.user));
+                    localStorage.setItem('userId', data.user._id);
+                    alert('Login successful!');
+                    if (data.user.role === 'admin' || data.user.role === 'faculty') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 } else {
-                    window.location.href = 'index.html';
+                    alert('Error: ' + (data.message || 'Login failed'));
                 }
-            } else {
-                alert('Error: ' + (data.message || 'Login failed'));
+            } catch (err) {
+                console.error('Login error:', err);
+                alert('Connection error: ' + err.message);
             }
-        } catch (err) {
-            console.error('Login error:', err);
-            alert('Connection error: ' + err.message);
-        }
-    });
-    
-    // 🟢 REGISTER Logic
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('register-name').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        const semester = document.getElementById('register-semester').value;
-        const branch = document.getElementById('register-branch').value;
-        const college = document.getElementById('register-college').value;
-        const passingYear = document.getElementById('register-passing').value;
+        });
         
-        // Yahan bhi URL automatic decide hoga
-        const API_URL = getApiUrl();
-        
-        try {
-            const res = await fetch(`${API_URL}/api/auth/register`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
-            });
+        // 🟢 REGISTER Logic
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const semester = document.getElementById('register-semester').value;
+            const branch = document.getElementById('register-branch').value;
+            const college = document.getElementById('register-college').value;
+            const passingYear = document.getElementById('register-passing').value;
             
-            const data = await res.json();
-            console.log('Register Response:', data);
+            const API_URL = getApiUrl();
             
-            if (res.ok) {
-                alert('Account created! Please login with your credentials.');
-                tabs[0].click(); // Switch to login tab
-                document.getElementById('login-email').value = email;
-            } else {
-                alert('Error: ' + (data.message || 'Registration failed'));
+            try {
+                console.log(`Register Request to: ${API_URL}/api/auth/register`); // Debug log
+
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, email, password, semester, college, passingYear, branch })
+                });
+                
+                const data = await res.json();
+                console.log('Register Response:', data);
+                
+                if (res.ok) {
+                    alert('Account created! Please login with your credentials.');
+                    tabs[0].click();
+                    document.getElementById('login-email').value = email;
+                } else {
+                    alert('Error: ' + (data.message || 'Registration failed'));
+                }
+            } catch (err) {
+                console.error('Register error:', err);
+                alert('Connection error: ' + err.message);
             }
-        } catch (err) {
-            console.error('Register error:', err);
-            alert('Connection error: ' + err.message);
-        }
-    });
-</script>
+        });
+    </script>
+</body>
+</html>
