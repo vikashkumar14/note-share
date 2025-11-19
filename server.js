@@ -14,27 +14,47 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-that-should-be-long-and-random';
 // ==================== CORS CONFIGURATION ====================
 app.use(express.json());
+
+const STATIC_ALLOWED_ORIGINS = [
+  'https://noteshare-y2kp.onrender.com',
+  'https://note-share-yfyr.onrender.com',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500'
+];
+
+function isOriginAllowed(origin) {
+  if (!origin) return true; // non-browser or same-origin
+  if (STATIC_ALLOWED_ORIGINS.includes(origin)) return true;
+  try {
+    const u = new URL(origin);
+    // Allow Vercel preview deployments under this project space
+    if (u.protocol === 'https:' && (u.hostname.endsWith('.vercel.app') || u.hostname.endsWith('.vikashkumar14s-projects.vercel.app'))) {
+      return true;
+    }
+  } catch (e) { /* ignore */ }
+  return false;
+}
+
 const corsOptions = {
-  origin: [
-    'https://noteshare-y2kp.onrender.com',
-    'https://note-share-yfyr.onrender.com',
-    'http://localhost:5000',
-    'http://127.0.0.1:5000',
-    'http://localhost:5500',
-    'http://127.0.0.1:5500'
-  ],
+  origin: function(origin, callback) {
+    const allowed = isOriginAllowed(origin);
+    callback(null, allowed);
+  },
   credentials: true,
   optionsSuccessStatus: 204,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 };
+
 app.use(cors(corsOptions));
+
 // Explicitly handle preflight across all routes (Express 5 safe)
-const allowedOrigins = new Set(corsOptions.origin);
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     const origin = req.headers.origin;
-    if (origin && allowedOrigins.has(origin)) {
+    if (isOriginAllowed(origin)) {
       res.header('Access-Control-Allow-Origin', origin);
       res.header('Vary', 'Origin');
       res.header('Access-Control-Allow-Credentials', 'true');
@@ -103,6 +123,7 @@ const checkRole = (...roles) => (req, res, next) => {
 // ==================== STATIC FILES ====================
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/assetes', express.static(path.join(__dirname, 'assetes')));
 // ==================== AUTHENTICATION APIS ====================
 app.post('/api/auth/register', async (req, res) => {
   try {
